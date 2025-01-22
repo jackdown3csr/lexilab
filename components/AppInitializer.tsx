@@ -14,7 +14,9 @@ export default function AppInitializer({ className }: AppInitializerProps) {
         if (!response.ok) {
           throw new Error("Failed to initialize application")
         }
-      } catch (error) {}
+      } catch {
+        // Error handling can be added here if needed
+      }
     }
 
     initApp()
