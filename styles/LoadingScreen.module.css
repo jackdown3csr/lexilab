@@ -1,0 +1,134 @@
+.gameOverScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+.title {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px var(--glow-color);
+}
+
+.score {
+  font-size: 1.5rem;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 5px var(--glow-color);
+}
+
+.saveScoreSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100px;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.saveScore {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 300px;
+}
+
+.saveScore input {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.error {
+  color: #ff4136;
+  margin-top: 0.5rem;
+  text-shadow: 0 0 5px rgba(255, 65, 54, 0.5);
+}
+
+.saved {
+  color: #2ecc40;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 5px rgba(46, 204, 64, 0.5);
+}
+
+.rank {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 5px var(--glow-color);
+}
+
+.leaderboard {
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.leaderboard h3 {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 5px var(--glow-color);
+}
+
+.leaderboard table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard th,
+.leaderboard td {
+  padding: 0.5rem;
+  border: 1px solid var(--primary-color);
+  color: var(--text-color);
+}
+
+.leaderboard th {
+  background-color: rgba(244, 151, 86, 0.2);
+  color: var(--primary-color);
+}
+
+.userScore {
+  background-color: rgba(244, 151, 86, 0.1);
+  font-weight: bold;
+}
+
+.playAgain {
+  font-size: 1rem;
+  padding: 0.75rem 2rem;
+  margin-top: 1rem;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+.existingScore {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 5px var(--glow-color);
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .score {
+    font-size: 1.2rem;
+  }
+
+  .playAgain {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
+

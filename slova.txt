@@ -1,0 +1,204 @@
+Galactica,Our beloved
+Town Hall,Friday
+Cypherbook,Passport
+Universe,Most epic CM
+CypherUni,Free education
+Reputation,You really need this
+CypherCapital,Remember... is the key
+Kryptos,Nice statue
+Rug Pull,Destiny of bad projects
+Starbase,Testing environment
+Reticulum,Name of the testnet blochchain  
+Cypher,Encrypted identity system  
+zkKYC,Privacy-focused identity verification  
+Reputation,Digital trust score  
+Citizen,Member of the Cypher State  
+Governance,Decision-making system  
+Sybil,Fake identity attack  
+Validator,Node ensuring network security  
+Consensus,Agreement in blockchain  
+Protocol,Rules of a blockchain network  
+Network,System of connected nodes  
+Privacy,Protection of personal data  
+Identity,Digital representation of a person  
+Community,Group of network participants  
+Blockchain,Distributed ledger technology  
+Compliance,Following rules and standards  
+Innovation,Creating new ideas or solutions  
+Efficiency,Optimized use of resources  
+Transparency,Openness and clarity  
+Integration,Connecting multiple systems  
+Collaboration,Working together on tasks  
+Security,Protecting data or systems  
+Technology,Application of scientific knowledge  
+Metadata,Data about other data  
+Registry,Record-keeping system  
+Democracy,Governance by the people  
+SBT,Soulbound token for identity  
+zkNFT,Privacy-focused non-transferable token  
+Meritocracy,System based on merit or skill  
+Quadratic,Mathematical voting system  
+Transactions,Exchanges on a blockchain  
+Universal,Applies to everyone or everything  
+Income,Regular payment or earnings  
+Custodian,Entity managing resources securely  
+Persistent,Lasting or ongoing  
+Footprint,Record of activity on Web3  
+Selective,Controlled disclosure of data  
+Augmented,Enhanced or improved  
+Societal,Related to society  
+Framework,Structure or model  
+Validator,Verifies blockchain transactions  
+Encrypted,Secured with cryptography  
+Optimization,Making systems more efficient  
+Ecosystem,Network environment  
+Reputation,Trust based on activity  
+Mechanisms,Processes for functionality  
+Efficiency,Effective use of resources  
+Operations,Functions or tasks in a system  
+Guardians,Protectors in the network  
+Sovereignty,Control or independence  
+Contracts,Agreements enforced digitally  
+Ledger,Record of transactions  
+DeSoc,Decentralized society concept  
+DePol,Decentralized politics concept  
+GNET,Token of the Galactica network  
+SybilProof,Prevention of fake identities  
+Governance,Management and decision-making  
+Compliance,Adherence to rules  
+Integration,Bringing together systems  
+Resilience,Ability to recover quickly  
+Interaction,User actions in Web3  
+MeritDriven,Based on contributions  
+Reputation,Trust score in the system  
+Quadratic,Mathematical system for fairness  
+Voting,Decision-making by choice  
+Framework,Underlying structure  
+Universal,For everyone without exception  
+Metadata,Data that describes other data  
+Security,Protecting assets and information  
+Innovation,Creating something new  
+Transparency,Being open and clear  
+Development,Improvement or progress  
+Reputation,Trust built through actions  
+Citizenship,Being a member of a community  
+Protocol,Set of rules in a system  
+Privacy,Keeping data confidential  
+Collaboration,Working together to achieve goals  
+Efficiency,Achieving results with minimal waste  
+Adoption,Becoming widely used  
+Validator,Ensures correctness of transactions  
+Interaction,How users engage with the system  
+Reputation,Trustworthiness in a system  
+Encryption,Securing data from unauthorized access  
+Sybil,Preventing multiple fake identities  
+Consensus,Agreement across participants  
+Identity,Who someone is digitally  
+Compliance,Meeting required standards  
+Merit,Recognition for contributions  
+Governance,Management of a system  
+Mining,Generating cryptocurrency rewards	
+Confirmation,measure of blocks
+Wrapped token,use on alternative blockchain	
+Zeppelin,A community of contract developers 	
+Truffle,development tool and choclate	
+Token standard,Rules smart contracts follow	
+Migration,Blockchain to blockchain	
+Genesis block	,Block height 0	
+Escrow,Third patry in a transaction	
+Gwei,Price of transaction	
+Hyperledger fabfic	,Ibm's private blockchain toolset	
+Layer 0,Run beneath blockchain 
+Non custodial	,User held private keys	
+Oversold,No upwards growth	
+Parachain,Intergrated project specific blockchain 	
+Public address,hash of a public key	
+Shilling,promoting 	
+Quorum,Type of enterprise-focused blockchain 	
+Delisting,Asset removed from exchange	
+Cpu mining,Needs computing power	
+Altcoin,Not bitcoin	
+Game theory,Rerouting network mechanism 	
+Hard cap,Absolute maximum supply 	
+Instamine,Early launch token distribution	
+Jager	,Denomination of BNB		
+Off chain, Outside of blockchain 	
+Oracle manipulation,Defi hack
+Utility token	,Currency in blockchain 	
+Air gapping,Preventing unwanted access 	
+Casper,POW POS protocol 	
+Slippage,Order and execution price differ	
+Royalties,Income for NFT creator	
+Pump,Upward price movement	
+Rarities,Common to mystic	
+QRcode,Squares 	
+Infrastructure,Blockchain is built on	
+Hyperinflation,Extreme economic instability	
+Hexadecimal,16 character encoding 	
+Gamefi,Play to earn	
+Escrow,Third party in a transaction	
+Relay chain,Central chain of polkadot
+Soft fork,Backward-incompatible software update
+When moon,emphasise on Upward movement
+Wei,Fraction of ether
+Polygon,Scaling ethereum 
+Plasma,Scaling solution
+Overbought,Price may significantly rise
+Orphan block,Blocks that are not recognised
+Passive income,Gains by minimal labour
+Nonce,Number only used once
+Multisig wallet,Hold with increased protection
+Metaverse,It's three dimensional
+Mempool,legitimate transactions held here until confirmed
+Cryptography,Protect against unauthorized access
+Keccak,Versatile 
+cryptographic function
+Recovery seed,Series of words
+Audit,Detecting loopholes and weaknesses
+Coinbase,Brokerage platform
+Bandwidth,Measure of data between devices
+Hal Finnley,Worked with Satoshi
+Latency,Waiting for confirmation
+Pegged Currency,Backed by other assets 
+Resistance,Pause of uptrend
+Farm,Exchange for time and work
+Dump,Sell off
+Crowdfunding,Opportunities for start ups
+Lightning network,Bitcoin transaction technology 
+Rekt,Bad loss
+Scrypt,Alternative algorithm to SHA-256
+Craig wright,Claimed to be satoshi nakamoto
+Bear trapped,Usually manipulated
+Bug exploit,Attack systems vulnerability
+Hardfork,Protocol's rules are updated or altered
+Masternode,Part of an infrastructure
+Paper wallet,Offline cold storage
+Vesting period,Waiting for your tokens
+Bots,Carries out predefined  tasks
+Gas limit,Maximum limit for fee
+Opensea,Marketplace
+Whale,Huge amounts of assets
+Leverage,Using debt to increase returns
+Governance token,Holding voting power
+Fake out,Thought it was going up
+Candlestick,Open close high low
+Memecoin,Can give huge gains
+Merkle tree,Mathematical data structure
+Fan token,owners get access to services
+Asset-backed tokens,Backed by RWA
+Liquidity pool,Crowd sourced tokens
+Portfolio,Means to manage
+UTXO,Unspent transaction output
+Mnemonic phrase,Readable version of private keys
+Etherscan,Block explorer
+JOMO,Joy of missing out
+Minting,Creating an nft
+Order book,Arranged by price level
+Post-mine,Mining before public launch
+Roadmap,A timeline for projects
+Scam,dupes peoples crypto
+Roll up, Layer 2 Scaling solution
+Move to earn,living a healthy lifestyle
+On ramp,buy crypto using Fiat
+Off ramp,Taking gains using Fiat
+

@@ -1,0 +1,219 @@
+.startScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 1rem;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 0 20px var(--glow-color);
+  animation: fadeIn 1s ease-out;
+}
+
+.gameTitleContainer {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.gameTitle {
+  font-size: 4rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px var(--glow-color);
+  animation: glowPulse 2s infinite alternate, slideInFromTop 1s ease-out;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.gameTitle::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 100%;
+  height: 4px;
+  background: var(--primary-gradient);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s ease-out;
+  animation: expandUnderline 0.5s 1s forwards;
+}
+
+.authors {
+  font-size: 1rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 5px var(--glow-color);
+}
+
+.authorName {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.description {
+  font-size: 1rem;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 5px var(--glow-color);
+  animation: fadeInUp 1s ease-out 0.5s both;
+  max-width: 600px;
+}
+
+.rulesContainer {
+  background-color: rgba(244, 151, 86, 0.1);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  box-shadow: 0 0 10px var(--glow-color);
+  animation: fadeInUp 1s ease-out 1s both;
+  max-width: 500px;
+  width: 100%;
+}
+
+.rulesTitle {
+  font-size: 1.4rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 5px var(--glow-color);
+  text-align: center;
+}
+
+.rulesList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rulesList li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.rulesList li:hover {
+  transform: translateX(5px);
+}
+
+.ruleIcon {
+  color: var(--primary-color);
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.startButton {
+  font-size: 1.1rem;
+  padding: 0.75rem 2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 10px var(--glow-color);
+  animation: fadeInUp 1s ease-out 1.5s both;
+  transition: all 0.3s ease;
+}
+
+.startButton:not(:disabled):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px var(--glow-color);
+}
+
+.startButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.startButton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.3s;
+}
+
+.startButton:not(:disabled):hover::after {
+  left: 100%;
+  transition: 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  from {
+    text-shadow: 0 0 5px var(--glow-color);
+  }
+  to {
+    text-shadow: 0 0 20px var(--glow-color), 0 0 30px var(--glow-color);
+  }
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expandUnderline {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .gameTitle {
+    font-size: 3rem;
+  }
+  .description {
+    font-size: 0.9rem;
+  }
+  .rulesTitle {
+    font-size: 1.2rem;
+  }
+  .rulesList li {
+    font-size: 0.8rem;
+  }
+  .startButton {
+    font-size: 1rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .gameTitle {
+    font-size: 2.5rem;
+  }
+}
+

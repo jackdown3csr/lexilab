@@ -1,0 +1,329 @@
+.gameArea {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.scoreInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 1rem;
+}
+
+.scoreItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.5rem;
+  box-shadow: 0 0 10px var(--glow-color);
+  transition: all 0.3s ease;
+}
+
+.scoreItem:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px var(--glow-color);
+}
+
+.scoreIcon {
+  color: var(--primary-color);
+  margin-bottom: 0.25rem;
+  font-size: 1.2rem;
+}
+
+.scoreItem .label {
+  font-size: 0.8rem;
+  color: var(--primary-color);
+  text-transform: uppercase;
+}
+
+.scoreItem .value {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-color);
+  text-shadow: 0 0 5px var(--glow-color);
+}
+
+.multiplierStars {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.multiplierStar {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0 0.1rem;
+  color: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.multiplierStar.active {
+  color: var(--primary-color);
+  filter: drop-shadow(0 0 5px var(--glow-color));
+}
+
+.gameContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.timeBonusContainer {
+  width: 100%;
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+.timeBonusBar {
+  height: 100%;
+  background: var(--primary-gradient);
+  transition: width 0.2s linear;
+}
+
+.timeBonusIcon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.timeBonusText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  font-weight: bold;
+  white-space: nowrap;
+  text-shadow: 0 0 5px var(--glow-color);
+}
+
+.wordContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+  min-height: 3rem;
+  width: 100%;
+}
+
+.letter {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 0.5rem;
+  color: var(--text-color);
+  text-shadow: 0 0 10px var(--glow-color);
+  animation: popIn 0.5s ease-out;
+}
+
+.letter.nonAlphabetic {
+  color: var(--primary-color);
+}
+
+.hint {
+  text-align: center;
+  font-style: italic;
+  color: var(--primary-color);
+  margin-top: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  min-height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 10px var(--glow-color);
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.wordCompletionAnimation,
+.getReadyAnimation,
+.gameOverAnimation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 10;
+}
+
+.wordCompletionAnimation {
+  animation: fadeInOut 2s ease-in-out;
+}
+
+.getReadyAnimation {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.getReadyAnimation.fadeOut {
+  animation: fadeOut 0.5s ease-in-out forwards;
+}
+
+.gameOverAnimation {
+  animation: fadeInOut 3s ease-in-out;
+}
+
+.wordCompletionAnimation span,
+.getReadyAnimation span,
+.gameOverAnimation span {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  text-shadow: 0 0 20px var(--glow-color);
+  animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInOut {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+    text-shadow: 0 0 20px var(--glow-color);
+  }
+  to {
+    transform: scale(1.1);
+    text-shadow: 0 0 30px var(--glow-color), 0 0 40px var(--glow-color);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameArea {
+    padding: 0.5rem;
+  }
+
+  .scoreInfoGrid {
+    gap: 0.25rem;
+  }
+
+  .scoreItem {
+    padding: 0.25rem;
+  }
+
+  .scoreIcon {
+    font-size: 1rem;
+  }
+
+  .scoreItem .label {
+    font-size: 0.7rem;
+  }
+
+  .scoreItem .value {
+    font-size: 1rem;
+  }
+
+  .multiplierStar {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .timeBonusContainer {
+    height: 15px;
+  }
+
+  .timeBonusIcon {
+    font-size: 0.8rem;
+  }
+
+  .timeBonusText {
+    font-size: 0.7rem;
+  }
+
+  .letter {
+    font-size: 1.5rem;
+    margin: 0 0.25rem;
+  }
+
+  .hint {
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .wordCompletionAnimation span,
+  .getReadyAnimation span,
+  .gameOverAnimation span {
+    font-size: 1.5rem;
+  }
+}
+

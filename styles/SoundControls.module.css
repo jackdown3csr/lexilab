@@ -1,0 +1,74 @@
+.soundControl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.muteButton,
+.closeButton {
+  color: var(--primary-color);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.muteButton:hover,
+.closeButton:hover {
+  color: var(--text-color);
+  text-shadow: 0 0 5px var(--glow-color);
+}
+
+.volumeSlider {
+  width: 100px;
+}
+
+.volumeSlider [class*="SliderTrack"] {
+  background-color: var(--secondary-color);
+  height: 4px;
+}
+
+.volumeSlider [class*="SliderRange"] {
+  background-color: var(--primary-color);
+}
+
+.volumeSlider [class*="SliderThumb"] {
+  width: 16px;
+  height: 16px;
+  background-color: var(--primary-color);
+  border: 2px solid var(--text-color);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.holdIndicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: width 0.1s linear;
+}
+
+@media (max-width: 480px) {
+  .soundControl {
+    padding: 4px;
+  }
+
+  .muteButton,
+  .closeButton {
+    padding: 2px;
+  }
+
+  .volumeSlider {
+    width: 80px;
+  }
+}
+

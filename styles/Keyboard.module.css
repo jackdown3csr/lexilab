@@ -1,0 +1,127 @@
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 500px;
+  margin-top: auto;
+  padding: 0.5rem;
+  position: relative;
+}
+
+.row {
+  display: flex;
+  gap: 0.25rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.key {
+  flex: 1;
+  height: 3rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: var(--primary-gradient);
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+.key:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+.key.used {
+  background: var(--secondary-color);
+  color: var(--text-color);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.key.dummy {
+  flex: 0.5;
+  background-color: transparent;
+  cursor: default;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+.key.otherDummy {
+  background-color: rgba(255, 255, 255, 0.05);
+  cursor: default;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+.key:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.key.soundControl {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: black; /* Change the color to black */
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0.7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.key.soundControl svg {
+  color: black;
+}
+
+.key.soundControl:hover {
+  opacity: 1;
+}
+
+.soundControlPopup {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+/* Adjustments for different row lengths */
+.row:nth-child(2) .key:first-child,
+.row:nth-child(2) .key:last-child {
+  flex: 0.5;
+}
+
+.row:nth-child(3) .key:first-child,
+.row:nth-child(3) .key:last-child {
+  flex: 1.5;
+}
+
+@media (max-width: 480px) {
+  .keyboard {
+    gap: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  .row {
+    gap: 0.15rem;
+  }
+
+  .key {
+    height: 2.5rem;
+    font-size: 0.9rem;
+  }
+}
+
