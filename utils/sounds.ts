@@ -6,7 +6,7 @@ class SoundManager {
   private isInitialized = false
   private autoplayAllowed = false
   private musicVolume = 0.05 // 10% default volume for background music
-  private effectsVolume = 0.5 // 50% default volume for sound effects
+  private effectsVolume = 0.4 // 50% default volume for sound effects
 
   async initialize() {
     if (this.isInitialized) return
