@@ -120,7 +120,7 @@ export default function GameOverScreen({ score, onPlayAgain, isTargetedResolutio
         {savedSuccessfully && <p className={styles.saved}>Score saved successfully!</p>}
         {existingScore !== null && (
           <p className={styles.existingScore}>
-            You already have a higher score of {existingScore}. Keep playing to beat your best!
+            You already have a higher score of {existingScore}. Keep playing to beat your best!!
           </p>
         )}
       </div>
