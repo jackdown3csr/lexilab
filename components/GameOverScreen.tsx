@@ -14,9 +14,10 @@ interface HighScore {
 interface GameOverScreenProps {
   score: number
   onPlayAgain: () => void
+  isTargetedResolution: boolean
 }
 
-export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenProps) {
+export default function GameOverScreen({ score, onPlayAgain, isTargetedResolution }: GameOverScreenProps) {
   const [playerName, setPlayerName] = useState("")
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -78,11 +79,16 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
         setUserRank(data.userRank)
         setSavedSuccessfully(true)
       }
-    } catch {
+    } catch (error) {
+      console.error("Error saving score:", error)
       setSaveError("Failed to save score. Please try again.")
     } finally {
       setIsSaving(false)
     }
+  }
+
+  const truncateName = (name: string, maxLength = 22) => {
+    return name.length > maxLength ? name.substring(0, maxLength - 3) + "..." : name
   }
 
   if (isLoading) {
@@ -90,7 +96,7 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
   }
 
   return (
-    <div className={styles.gameOverScreen}>
+    <div className={`${styles.gameOverScreen} ${isTargetedResolution ? styles.targetedResolution : ""}`}>
       <h2 className={styles.title}>Game Over</h2>
       <p className={styles.score}>Your Score: {score}</p>
       <div className={styles.saveScoreSection}>
@@ -102,8 +108,10 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
               onChange={(e) => setPlayerName(e.target.value.toUpperCase())}
               placeholder="Enter your name"
               disabled={isSaving}
+              maxLength={22}
+              className={`${styles.input} ${styles.orbitronFont}`}
             />
-            <Button onClick={handleSaveScore} disabled={isSaving}>
+            <Button onClick={handleSaveScore} disabled={isSaving} className={`${styles.button} ${styles.orbitronFont}`}>
               {isSaving ? "Saving..." : "Save Score"}
             </Button>
           </div>
@@ -117,28 +125,32 @@ export default function GameOverScreen({ score, onPlayAgain }: GameOverScreenPro
         )}
       </div>
       {userRank && <p className={styles.rank}>Your Rank: {userRank}</p>}
-      <div className={styles.leaderboard}>
-        <h3>Top 5 High Scores</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Name</th>
-              <th>Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            {highScores.map((score, index) => (
-              <tr key={index} className={userRank === index + 1 ? styles.userScore : ""}>
-                <td>{index + 1}</td>
-                <td>{score.member}</td>
-                <td>{score.score}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className={styles.leaderboardContainer}>
+        <div className={styles.leaderboard}>
+          <h3>Top 5 High Scores</h3>
+          <div className={styles.tableWrapper}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Name</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {highScores.map((score, index) => (
+                  <tr key={index} className={userRank === index + 1 ? styles.userScore : ""}>
+                    <td>{index + 1}</td>
+                    <td>{truncateName(score.member)}</td>
+                    <td>{score.score}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <Button onClick={onPlayAgain} className={styles.playAgain}>
+      <Button onClick={onPlayAgain} className={`${styles.playAgain} ${styles.button} ${styles.orbitronFont}`}>
         Play Again
       </Button>
     </div>

@@ -125,3 +125,31 @@
   }
 }
 
+.targetedResolution {
+  padding: 0.25rem;
+}
+
+.targetedResolution .row {
+  gap: 0.15rem;
+}
+
+.targetedResolution .key {
+  height: 2.5rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1200px) and (max-height: 800px), (max-width: 1024px) and (max-height: 600px) {
+  .keyboard {
+    padding: 0.25rem;
+  }
+
+  .row {
+    gap: 0.15rem;
+  }
+
+  .key {
+    height: 2.5rem;
+    font-size: 0.9rem;
+  }
+}
+

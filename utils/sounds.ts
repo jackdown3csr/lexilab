@@ -5,13 +5,15 @@ class SoundManager {
   private isEffectsMuted = false
   private isInitialized = false
   private autoplayAllowed = false
-  private musicVolume = 0.05 // 10% default volume for background music
-  private effectsVolume = 0.4 // 50% default volume for sound effects
+  private musicVolume = 0.1 // 10% default volume for background music
+  private effectsVolume = 0.5 // 50% default volume for sound effects
+  private audioContext: AudioContext | null = null
 
   async initialize() {
     if (this.isInitialized) return
 
     this.selectRandomBackgroundMusic()
+    this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
     console.log("Sound initialization complete")
 
     this.isInitialized = true
@@ -101,22 +103,21 @@ class SoundManager {
     return this.effectsVolume
   }
 
-  generateTone(frequency: number, duration: number, volume: number, type: OscillatorType = "sine") {
-    if (typeof window === "undefined" || this.isEffectsMuted) return
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
-    const oscillator = audioContext.createOscillator()
-    const gainNode = audioContext.createGain()
+  private generateTone(frequency: number, duration: number, volume: number, type: OscillatorType = "sine") {
+    if (typeof window === "undefined" || this.isEffectsMuted || !this.audioContext) return
+    const oscillator = this.audioContext.createOscillator()
+    const gainNode = this.audioContext.createGain()
 
     oscillator.type = type
-    oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime)
+    oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime)
     oscillator.connect(gainNode)
-    gainNode.connect(audioContext.destination)
+    gainNode.connect(this.audioContext.destination)
 
-    gainNode.gain.setValueAtTime(volume * this.effectsVolume, audioContext.currentTime)
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration)
+    gainNode.gain.setValueAtTime(volume * this.effectsVolume, this.audioContext.currentTime)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioContext.currentTime + duration)
 
     oscillator.start()
-    oscillator.stop(audioContext.currentTime + duration)
+    oscillator.stop(this.audioContext.currentTime + duration)
   }
 
   playCorrectLetterSound() {
@@ -128,7 +129,8 @@ class SoundManager {
   }
 
   playButtonClickSound() {
-    this.generateTone(440, 0.05, 0.1, "square")
+    this.generateTone(220, 0.1, 0.2, "sine")
+    setTimeout(() => this.generateTone(165, 0.1, 0.1, "sine"), 50)
   }
 
   playWordCompletedSound() {
@@ -141,6 +143,24 @@ class SoundManager {
     this.generateTone(440, 0.1, 0.2, "sawtooth")
     setTimeout(() => this.generateTone(330, 0.1, 0.2, "sawtooth"), 100)
     setTimeout(() => this.generateTone(220, 0.2, 0.2, "sawtooth"), 200)
+  }
+
+  playGetReadyBeep() {
+    this.generateTone(440, 0.1, 0.1, "sine")
+  }
+
+  playLevelCompletionFanfare() {
+    const fanfareDuration = 0.15
+    const fanfareVolume = 0.3
+    this.generateTone(523.25, fanfareDuration, fanfareVolume, "sine") // C5
+    setTimeout(() => this.generateTone(659.25, fanfareDuration, fanfareVolume, "sine"), fanfareDuration * 1000) // E5
+    setTimeout(() => this.generateTone(783.99, fanfareDuration, fanfareVolume, "sine"), fanfareDuration * 2000) // G5
+    setTimeout(() => this.generateTone(1046.5, fanfareDuration * 2, fanfareVolume, "sine"), fanfareDuration * 3000) // C6
+  }
+
+  playGoSound() {
+    this.generateTone(880, 0.1, 0.3, "square")
+    setTimeout(() => this.generateTone(1320, 0.2, 0.3, "square"), 100)
   }
 }
 
@@ -220,5 +240,17 @@ export function getMusicVolume(): number {
 
 export function getEffectsVolume(): number {
   return soundManager.getEffectsVolume()
+}
+
+export function playGetReadyBeep() {
+  soundManager.playGetReadyBeep()
+}
+
+export function playLevelCompletionFanfare() {
+  soundManager.playLevelCompletionFanfare()
+}
+
+export function playGoSound() {
+  soundManager.playGoSound()
 }
 

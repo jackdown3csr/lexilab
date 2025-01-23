@@ -6,6 +6,7 @@
   height: 100%;
   z-index: -1;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .backgroundAnimation::before,
@@ -36,6 +37,22 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .backgroundAnimation::before,
+  .backgroundAnimation::after {
+    background-size: 30px 30px;
+    animation-duration: 30s;
+  }
+}
+
+@media (max-width: 480px) {
+  .backgroundAnimation::before,
+  .backgroundAnimation::after {
+    background-size: 20px 20px;
+    animation-duration: 40s;
   }
 }
 

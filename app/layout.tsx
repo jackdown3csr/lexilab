@@ -1,6 +1,7 @@
 import "./globals.css"
 import type { Metadata } from "next"
 import { Orbitron } from "next/font/google"
+import ClientLayout from "./ClientLayout"
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -20,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={orbitron.variable}>
-      <body>{children}</body>
+      <ClientLayout>{children}</ClientLayout>
     </html>
   )
 }

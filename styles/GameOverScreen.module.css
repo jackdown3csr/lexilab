@@ -5,12 +5,13 @@
   justify-content: flex-start;
   width: 100%;
   height: 100%;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
   overflow-y: auto;
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 20px;
   box-shadow: 0 0 20px var(--glow-color);
+  font-family: var(--font-orbitron), sans-serif;
 }
 
 .title {
@@ -32,7 +33,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 300px;
+  max-width: 600px;
   margin-bottom: 1.5rem;
 }
 
@@ -43,9 +44,33 @@
   width: 100%;
 }
 
-.saveScore input {
+.input {
   margin-bottom: 1rem;
   width: 100%;
+  max-width: 300px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid var(--primary-color);
+  background-color: var(--input-background);
+  color: var(--text-color);
+  border-radius: 4px;
+}
+
+.button {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  max-width: 300px;
+  width: 100%;
+}
+
+.button:hover {
+  background-color: var(--secondary-color);
 }
 
 .error {
@@ -67,10 +92,16 @@
   text-shadow: 0 0 5px var(--glow-color);
 }
 
+.leaderboardContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
 .leaderboard {
   width: 100%;
-  max-width: 400px;
-  margin-bottom: 1.5rem;
+  max-width: 600px;
 }
 
 .leaderboard h3 {
@@ -80,9 +111,15 @@
   text-shadow: 0 0 5px var(--glow-color);
 }
 
+.tableWrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
 .leaderboard table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 300px;
 }
 
 .leaderboard th,
@@ -115,18 +152,137 @@
   text-shadow: 0 0 5px var(--glow-color);
 }
 
-@media (max-width: 480px) {
+.orbitronFont {
+  font-family: var(--font-orbitron), sans-serif;
+}
+
+@media (max-width: 1200px) {
+  .gameOverScreen {
+    padding: 0.75rem;
+  }
+
   .title {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+  }
+
+  .score {
+    font-size: 1.3rem;
+  }
+
+  .input,
+  .button {
+    font-size: 0.9rem;
+  }
+
+  .leaderboard h3 {
+    font-size: 1.1rem;
+  }
+
+  .leaderboard th,
+  .leaderboard td {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .gameOverScreen {
+    padding: 0.5rem;
+  }
+
+  .title {
+    font-size: 1.6rem;
   }
 
   .score {
     font-size: 1.2rem;
   }
 
-  .playAgain {
-    font-size: 0.9rem;
-    padding: 0.6rem 1.5rem;
+  .input,
+  .button {
+    font-size: 0.85rem;
   }
+
+  .leaderboard h3 {
+    font-size: 1rem;
+  }
+
+  .leaderboard th,
+  .leaderboard td {
+    padding: 0.3rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameOverScreen {
+    padding: 0.25rem;
+  }
+
+  .title {
+    font-size: 1.4rem;
+  }
+
+  .score {
+    font-size: 1.1rem;
+  }
+
+  .input,
+  .button {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .leaderboard h3 {
+    font-size: 0.9rem;
+  }
+
+  .leaderboard th,
+  .leaderboard td {
+    padding: 0.25rem;
+    font-size: 0.7rem;
+  }
+
+  .playAgain {
+    font-size: 0.8rem;
+    padding: 0.5rem 1.2rem;
+  }
+}
+
+.targetedResolution {
+  padding: 0.5rem;
+}
+
+.targetedResolution .title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+.targetedResolution .score {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+}
+
+.targetedResolution .saveScoreSection {
+  max-width: 90%;
+}
+
+.targetedResolution .input,
+.targetedResolution .button {
+  font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+  padding: 0.4rem 0.8rem;
+}
+
+.targetedResolution .leaderboard h3 {
+  font-size: clamp(0.9rem, 2vw, 1rem);
+}
+
+.targetedResolution .leaderboard th,
+.targetedResolution .leaderboard td {
+  padding: 0.3rem;
+  font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+}
+
+.targetedResolution .playAgain {
+  font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+  padding: 0.5rem 1.5rem;
 }
 

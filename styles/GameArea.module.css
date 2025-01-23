@@ -5,8 +5,9 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 1rem;
+  padding: 0.5rem;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .scoreInfoGrid {
@@ -123,6 +124,7 @@
 
 .wordContainer {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   margin: 1rem 0;
@@ -182,11 +184,35 @@
 }
 
 .getReadyAnimation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 10;
   animation: fadeIn 0.5s ease-in-out;
 }
 
+.getReadyAnimation span {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  text-shadow: 0 0 20px var(--glow-color);
+}
+
+.getReadyAnimation .countdown {
+  font-size: 6rem;
+  margin-top: 1rem;
+  animation: pulse 1s infinite alternate;
+}
+
 .getReadyAnimation.fadeOut {
-  animation: fadeOut 0.5s ease-in-out forwards;
+  animation: fadeOut 1s ease-in-out forwards;
 }
 
 .gameOverAnimation {
@@ -251,11 +277,9 @@
 @keyframes pulse {
   from {
     transform: scale(1);
-    text-shadow: 0 0 20px var(--glow-color);
   }
   to {
     transform: scale(1.1);
-    text-shadow: 0 0 30px var(--glow-color), 0 0 40px var(--glow-color);
   }
 }
 
@@ -270,7 +294,236 @@
 
 @media (max-width: 480px) {
   .gameArea {
-    padding: 0.5rem;
+    padding: 0.25rem;
+    font-size: 14px;
+  }
+
+  .scoreInfoGrid {
+    gap: 0.15rem;
+    max-width: 100%;
+  }
+
+  .scoreItem {
+    padding: 0.15rem;
+  }
+
+  .scoreIcon {
+    font-size: 0.9em;
+  }
+
+  .scoreItem .label {
+    font-size: 0.7em;
+  }
+
+  .scoreItem .value {
+    font-size: 0.9em;
+  }
+
+  .multiplierStar {
+    width: 0.9em;
+    height: 0.9em;
+  }
+
+  .timeBonusContainer {
+    height: 12px;
+    margin-bottom: 0.5rem;
+  }
+
+  .timeBonusIcon {
+    font-size: 0.7em;
+  }
+
+  .timeBonusText {
+    font-size: 0.7em;
+  }
+
+  .letter {
+    font-size: 1.3em;
+    margin: 0 0.15rem;
+  }
+
+  .letter.longWord {
+    font-size: 1em;
+    margin: 0 0.1rem;
+  }
+
+  .hint {
+    font-size: 0.8em;
+    padding: 0.25rem 0.5rem;
+    min-height: 2.5rem;
+  }
+
+  .wordCompletionAnimation span,
+  .getReadyAnimation span,
+  .gameOverAnimation span {
+    font-size: 1.5em;
+  }
+
+  .getReadyAnimation .countdown {
+    font-size: 3em;
+  }
+
+  .bonusLifeNotification,
+  .levelChangeNotification,
+  .godModeNotification {
+    font-size: 0.8em;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 320px) {
+  .gameArea {
+    font-size: 12px;
+  }
+
+  .letter {
+    font-size: 1.2em;
+    margin: 0 0.1rem;
+  }
+
+  .letter.longWord {
+    font-size: 0.9em;
+    margin: 0 0.05rem;
+  }
+}
+
+.bonusLifeNotification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 255, 0, 0.2);
+  color: var(--text-color);
+  padding: 10px 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 1000;
+}
+
+.bonusLifeIcon {
+  color: var(--primary-color);
+}
+
+.levelChangeNotification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(244, 151, 86, 0.2);
+  color: var(--text-color);
+  padding: 10px 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 1000;
+}
+
+.godModeNotification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 215, 0, 0.2);
+  color: var(--text-color);
+  padding: 10px 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  animation: fadeInOut 3s ease-in-out;
+  z-index: 1000;
+}
+
+.godModeIcon {
+  color: gold;
+}
+
+@keyframes fadeInOut {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+}
+
+.longWordContainer {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.letter.longWord {
+  font-size: 1.5rem;
+  margin: 0 0.25rem;
+}
+
+@media (max-width: 480px) {
+  .letter.longWord {
+    font-size: 1.2rem;
+    margin: 0 0.15rem;
+  }
+}
+
+.targetedResolution {
+  padding: 0.5rem;
+}
+
+.targetedResolution .scoreInfoGrid {
+  gap: 0.25rem;
+}
+
+.targetedResolution .scoreItem {
+  padding: 0.25rem;
+}
+
+.targetedResolution .scoreIcon {
+  font-size: 1em;
+}
+
+.targetedResolution .scoreItem .label {
+  font-size: 0.7em;
+}
+
+.targetedResolution .scoreItem .value {
+  font-size: 0.9em;
+}
+
+.targetedResolution .timeBonusContainer {
+  height: 15px;
+  margin-bottom: 0.5rem;
+}
+
+.targetedResolution .timeBonusText {
+  font-size: 0.8em;
+}
+
+.targetedResolution .wordContainer {
+  margin: 0.5rem 0;
+}
+
+.targetedResolution .letter {
+  font-size: 1.5em;
+  margin: 0 0.25rem;
+}
+
+.targetedResolution .hint {
+  font-size: 0.9em;
+  padding: 0.25rem 0.5rem;
+  min-height: 2.5rem;
+}
+
+@media (max-width: 1200px) and (max-height: 800px), (max-width: 1024px) and (max-height: 600px) {
+  .gameArea {
+    padding: 0.25rem;
   }
 
   .scoreInfoGrid {
@@ -282,48 +535,39 @@
   }
 
   .scoreIcon {
-    font-size: 1rem;
+    font-size: 1em;
   }
 
   .scoreItem .label {
-    font-size: 0.7rem;
+    font-size: 0.7em;
   }
 
   .scoreItem .value {
-    font-size: 1rem;
-  }
-
-  .multiplierStar {
-    width: 1rem;
-    height: 1rem;
+    font-size: 0.9em;
   }
 
   .timeBonusContainer {
     height: 15px;
-  }
-
-  .timeBonusIcon {
-    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
   }
 
   .timeBonusText {
-    font-size: 0.7rem;
+    font-size: 0.8em;
+  }
+
+  .wordContainer {
+    margin: 0.5rem 0;
   }
 
   .letter {
-    font-size: 1.5rem;
+    font-size: 1.5em;
     margin: 0 0.25rem;
   }
 
   .hint {
-    font-size: 0.9rem;
+    font-size: 0.9em;
     padding: 0.25rem 0.5rem;
-  }
-
-  .wordCompletionAnimation span,
-  .getReadyAnimation span,
-  .gameOverAnimation span {
-    font-size: 1.5rem;
+    min-height: 2.5rem;
   }
 }
 

@@ -1,8 +1,8 @@
+"use client"
+
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Volume2, VolumeX, Music, MicOffIcon as MusicOff } from "lucide-react"
-import { Slider } from "@/components/ui/slider"
-import { Button } from "@/components/ui/button"
+import { Volume2, VolumeX, Music, MicOffIcon as MusicOff, Plus, Minus } from "lucide-react"
 import {
   setMusicVolume,
   setEffectsVolume,
@@ -21,7 +21,7 @@ interface SoundControlProps {
   onClose?: () => void
 }
 
-const SoundControl: React.FC<SoundControlProps> = ({ type, onClose }) => {
+export const SoundControl: React.FC<SoundControlProps> = ({ type, onClose }) => {
   const [volume, setVolume] = useState(type === "music" ? getMusicVolume() : getEffectsVolume())
   const [isMuted, setIsMuted] = useState(type === "music" ? getMusicMuted() : getEffectsMuted())
   const [isReady, setIsReady] = useState(false)
@@ -42,8 +42,8 @@ const SoundControl: React.FC<SoundControlProps> = ({ type, onClose }) => {
     }
   }, [volume, isReady, type])
 
-  const handleVolumeChange = (value: number[]) => {
-    setVolume(value[0])
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(Math.max(0, Math.min(1, newVolume)))
   }
 
   const handleMuteToggle = () => {
@@ -86,9 +86,7 @@ const SoundControl: React.FC<SoundControlProps> = ({ type, onClose }) => {
 
   return (
     <div className={styles.soundControl}>
-      <Button
-        variant="ghost"
-        size="icon"
+      <button
         onMouseDown={handleMuteMouseDown}
         onMouseUp={handleMuteMouseUp}
         onMouseLeave={handleMuteMouseUp}
@@ -106,23 +104,22 @@ const SoundControl: React.FC<SoundControlProps> = ({ type, onClose }) => {
           <Volume2 size={16} />
         )}
         <div className={styles.holdIndicator} style={{ width: `${holdProgress}%` }} />
-      </Button>
-      <Slider
-        value={[volume]}
-        min={0}
-        max={1}
-        step={0.01}
-        onValueChange={handleVolumeChange}
-        className={styles.volumeSlider}
-      />
+      </button>
+      <div className={styles.volumeControl}>
+        <button onClick={() => handleVolumeChange(volume - 0.1)} className={styles.volumeButton}>
+          <Minus size={16} />
+        </button>
+        <span className={styles.volumeDisplay}>{Math.round(volume * 100)}%</span>
+        <button onClick={() => handleVolumeChange(volume + 0.1)} className={styles.volumeButton}>
+          <Plus size={16} />
+        </button>
+      </div>
       {onClose && (
-        <Button variant="ghost" size="icon" onClick={onClose} className={styles.closeButton}>
+        <button onClick={onClose} className={styles.closeButton}>
           X
-        </Button>
+        </button>
       )}
     </div>
   )
 }
-
-export { SoundControl }
 

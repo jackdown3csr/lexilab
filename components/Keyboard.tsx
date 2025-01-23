@@ -8,12 +8,17 @@ interface KeyboardProps {
   usedKeys: Set<string>
   totalAttempts: number
   disabled: boolean
+  isTargetedResolution: boolean
 }
 
-export default function Keyboard({ onKeyPress, usedKeys, totalAttempts, disabled }: KeyboardProps) {
-  const [musicControlOpen, setMusicControlOpen] = useState(false)
-  const [effectsControlOpen, setEffectsControlOpen] = useState(false)
-  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null)
+export default function Keyboard({
+  onKeyPress,
+  usedKeys,
+  totalAttempts,
+  disabled,
+  isTargetedResolution,
+}: KeyboardProps) {
+  const [openControl, setOpenControl] = useState<"music" | "effects" | null>(null)
 
   const keys = [
     ["Q", "W", "E", "R", "T", "Z", "U", "I", "O", "P"],
@@ -22,48 +27,21 @@ export default function Keyboard({ onKeyPress, usedKeys, totalAttempts, disabled
   ]
 
   const handleSoundControlPress = useCallback((type: "music" | "effects") => {
-    const timer = setTimeout(() => {
-      if (type === "music") {
-        setMusicControlOpen(true)
-      } else {
-        setEffectsControlOpen(true)
-      }
-    }, 500) // Long press threshold
-
-    setLongPressTimer(timer)
+    setOpenControl((prev) => (prev === type ? null : type))
   }, [])
 
-  const handleSoundControlRelease = useCallback(
-    (type: "music" | "effects") => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer)
-      }
-
-      // If it wasn't a long press, treat it as a click
-      if ((type === "music" && !musicControlOpen) || (type === "effects" && !effectsControlOpen)) {
-        // Toggle mute
-        if (type === "music") {
-          // Implement music mute toggle
-        } else {
-          // Implement effects mute toggle
-        }
-      }
-
-      setLongPressTimer(null)
-    },
-    [longPressTimer, musicControlOpen, effectsControlOpen],
-  )
-
   useEffect(() => {
-    return () => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer)
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (openControl && !(event.target as Element).closest(`.${styles.soundControlPopup}`)) {
+        setOpenControl(null)
       }
     }
-  }, [longPressTimer])
+    document.addEventListener("click", handleOutsideClick)
+    return () => document.removeEventListener("click", handleOutsideClick)
+  }, [openControl])
 
   return (
-    <div className={styles.keyboard}>
+    <div className={`${styles.keyboard} ${isTargetedResolution ? styles.targetedResolution : ""}`}>
       {keys.map((row, rowIndex) => (
         <div key={rowIndex} className={styles.row}>
           {row.map((key, index) => {
@@ -71,11 +49,11 @@ export default function Keyboard({ onKeyPress, usedKeys, totalAttempts, disabled
               return (
                 <button
                   key={`${rowIndex}-${key}-${index}`}
-                  className={`${styles.key} ${styles.dummy} ${styles.soundControl}`}
-                  onMouseDown={() => handleSoundControlPress("music")}
-                  onMouseUp={() => handleSoundControlRelease("music")}
-                  onTouchStart={() => handleSoundControlPress("music")}
-                  onTouchEnd={() => handleSoundControlRelease("music")}
+                  className={`${styles.key} ${styles.soundControl}`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleSoundControlPress("music")
+                  }}
                 >
                   <Music size={16} />
                 </button>
@@ -84,11 +62,11 @@ export default function Keyboard({ onKeyPress, usedKeys, totalAttempts, disabled
               return (
                 <button
                   key={`${rowIndex}-${key}-${index}`}
-                  className={`${styles.key} ${styles.dummy} ${styles.soundControl}`}
-                  onMouseDown={() => handleSoundControlPress("effects")}
-                  onMouseUp={() => handleSoundControlRelease("effects")}
-                  onTouchStart={() => handleSoundControlPress("effects")}
-                  onTouchEnd={() => handleSoundControlRelease("effects")}
+                  className={`${styles.key} ${styles.soundControl}`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleSoundControlPress("effects")
+                  }}
                 >
                   <Volume2 size={16} />
                 </button>
@@ -97,7 +75,9 @@ export default function Keyboard({ onKeyPress, usedKeys, totalAttempts, disabled
               return (
                 <button
                   key={`${rowIndex}-${key}-${index}`}
-                  className={`${styles.key} ${usedKeys?.has(key) ? styles.used : ""} ${key === "dummy" ? `${styles.dummy} ${styles.otherDummy}` : ""}`}
+                  className={`${styles.key} ${usedKeys?.has(key) ? styles.used : ""} ${
+                    key === "dummy" ? `${styles.dummy} ${styles.otherDummy}` : ""
+                  }`}
                   onClick={() => key !== "dummy" && onKeyPress(key)}
                   disabled={key === "dummy" || usedKeys?.has(key) || disabled || totalAttempts <= 0}
                 >
@@ -108,14 +88,9 @@ export default function Keyboard({ onKeyPress, usedKeys, totalAttempts, disabled
           })}
         </div>
       ))}
-      {musicControlOpen && (
+      {openControl && (
         <div className={styles.soundControlPopup}>
-          <SoundControl type="music" onClose={() => setMusicControlOpen(false)} />
-        </div>
-      )}
-      {effectsControlOpen && (
-        <div className={styles.soundControlPopup}>
-          <SoundControl type="effects" onClose={() => setEffectsControlOpen(false)} />
+          <SoundControl type={openControl} />
         </div>
       )}
     </div>

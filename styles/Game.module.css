@@ -4,9 +4,10 @@
   align-items: center;
   min-height: 100vh;
   width: 100%;
-  padding: 1rem;
+  padding: 0;
   box-sizing: border-box;
   background-color: var(--background-color);
+  overflow: hidden;
 }
 
 .gameContainer {
@@ -15,12 +16,11 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 600px;
   height: 100vh;
-  max-height: 800px;
+  max-width: 100%;
   background-color: rgba(26, 26, 26, 0.8);
-  border-radius: 20px;
-  padding: 1rem;
+  border-radius: 0;
+  padding: 0;
   box-shadow: 0 0 20px var(--glow-color);
   backdrop-filter: blur(10px);
   overflow: hidden;
@@ -34,7 +34,8 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  max-width: 500px;
+  overflow-y: auto;
+  padding: 0.2rem;
 }
 
 .gameTitle {
@@ -71,24 +72,6 @@
   margin-top: 1rem;
 }
 
-@media (max-width: 480px) {
-  .gameWrapper {
-    padding: 0.5rem;
-  }
-
-  .gameContainer {
-    padding: 0.5rem;
-    max-height: none;
-    height: calc(100vh - 1rem);
-    border-radius: 10px;
-  }
-
-  .gameTitle {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-}
-
 .authors {
   text-align: center;
   font-size: 0.9rem;
@@ -113,5 +96,105 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.fullHeightContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  overflow-y: auto;
+}
+
+@media (min-width: 601px) {
+  .gameWrapper {
+    padding: 0.5rem;
+  }
+
+  .gameContainer {
+    max-width: 600px;
+    max-height: 800px;
+    border-radius: 20px;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .gameContainer {
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .gameWrapper {
+    padding: 0.25rem;
+  }
+
+  .gameContainer {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 10px;
+  }
+
+  .gameTitle {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameWrapper {
+    padding: 0;
+  }
+
+  .gameContainer {
+    border-radius: 0;
+  }
+
+  .gameContent {
+    padding: 0.1rem;
+  }
+
+  .gameTitle {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .authors {
+    font-size: 0.8rem;
+  }
+}
+
+.targetedResolution .gameContainer {
+  height: 100%;
+  max-height: none;
+}
+
+.targetedResolution .gameContent {
+  height: 100%;
+  max-height: none;
+  overflow-y: auto;
+}
+
+.targetedResolution .fullHeightContainer {
+  height: 100%;
+  min-height: 0;
+}
+
+@media (max-width: 1200px) and (max-height: 800px), (max-width: 1024px) and (max-height: 600px) {
+  .gameWrapper {
+    padding: 0;
+  }
+
+  .gameContainer {
+    border-radius: 0;
+    height: 100vh;
+    max-height: none;
+  }
+
+  .gameContent {
+    padding: 0.5rem;
+  }
 }
 
