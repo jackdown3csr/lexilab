@@ -572,3 +572,51 @@
   }
 }
 
+.mobileViewportAdjusted {
+  min-height: -webkit-fill-available;
+}
+
+.mobileViewportAdjusted .scoreInfoGrid {
+  gap: 0.25rem;
+}
+
+.mobileViewportAdjusted .scoreItem {
+  padding: 0.25rem;
+}
+
+.mobileViewportAdjusted .scoreIcon {
+  font-size: 0.9em;
+}
+
+.mobileViewportAdjusted .scoreItem .label {
+  font-size: 0.7em;
+}
+
+.mobileViewportAdjusted .scoreItem .value {
+  font-size: 0.9em;
+}
+
+.mobileViewportAdjusted .timeBonusContainer {
+  height: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.mobileViewportAdjusted .timeBonusText {
+  font-size: 0.7em;
+}
+
+.mobileViewportAdjusted .gameContent {
+  padding: 0.25rem;
+}
+
+.mobileViewportAdjusted .letter {
+  font-size: 1.2em;
+  margin: 0 0.15rem;
+}
+
+.mobileViewportAdjusted .hint {
+  font-size: 0.8em;
+  padding: 0.25rem 0.5rem;
+  min-height: 2.5rem;
+}
+

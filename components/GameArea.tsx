@@ -144,8 +144,10 @@ export default function GameArea({
   }
 
   return (
-    <div className={`${styles.gameArea} ${isTargetedResolution ? styles.targetedResolution : ""}`}>
-      <div className={styles.scoreInfoGrid}>
+    <div
+      className={`${styles.gameArea} ${isTargetedResolution ? styles.targetedResolution : ""} ${isMobileViewportAdjusted ? styles.mobileViewportAdjusted : ""}`}
+    >
+      <div className={`${styles.scoreInfoGrid} ${isMobileViewportAdjusted ? styles.mobileAdjusted : ""}`}>
         <div className={styles.scoreItem}>
           <Star className={styles.scoreIcon} />
           <span className={styles.label}>SCORE</span>
@@ -179,7 +181,7 @@ export default function GameArea({
         <Clock className={styles.timeBonusIcon} />
         <span className={styles.timeBonusText}>{`TIME: ${timeRemaining}s`}</span>
       </div>
-      <div className={styles.gameContent}>
+      <div className={`${styles.gameContent} ${isMobileViewportAdjusted ? styles.mobileAdjusted : ""}`}>
         <div className={`${styles.wordContainer} ${currentWord.length > 12 ? styles.longWordContainer : ""}`}>
           {currentWord.split("").map(renderLetter)}
         </div>
