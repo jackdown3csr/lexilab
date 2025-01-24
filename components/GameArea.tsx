@@ -21,6 +21,7 @@ interface GameAreaProps {
   isGodMode: boolean
   godModePressesLeft: number
   isTargetedResolution: boolean
+  isMobileViewportAdjusted: boolean
 }
 
 export default function GameArea({
@@ -42,6 +43,7 @@ export default function GameArea({
   isGodMode,
   godModePressesLeft,
   isTargetedResolution,
+  isMobileViewportAdjusted,
 }: GameAreaProps) {
   const [displayMultiplier, setDisplayMultiplier] = useState(multiplier)
   const [animatedScore, setAnimatedScore] = useState(score)

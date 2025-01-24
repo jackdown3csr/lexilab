@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 100%; /* Update: Removed vh */
   width: 100%;
   padding: 1rem;
   text-align: center;
@@ -20,6 +20,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 1rem 0; /* Update */
 }
 
 .gameTitleContainer {
@@ -142,6 +143,10 @@
   color: var(--text-color);
   opacity: 0.7;
   margin-top: 0.5rem;
+  position: absolute; /* Update */
+  bottom: 1rem; /* Update */
+  left: 50%; /* Update */
+  transform: translateX(-50%); /* Update */
 }
 
 @keyframes fadeIn {

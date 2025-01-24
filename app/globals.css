@@ -111,3 +111,9 @@ input {
   border-radius: 4px;
 }
 
+@supports (-webkit-touch-callout: none) {
+  .mobileViewportAdjust {
+    height: -webkit-fill-available;
+  }
+}
+

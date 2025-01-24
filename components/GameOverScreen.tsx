@@ -15,9 +15,15 @@ interface GameOverScreenProps {
   score: number
   onPlayAgain: () => void
   isTargetedResolution: boolean
+  isMobileViewportAdjusted: boolean
 }
 
-export default function GameOverScreen({ score, onPlayAgain, isTargetedResolution }: GameOverScreenProps) {
+export default function GameOverScreen({
+  score,
+  onPlayAgain,
+  isTargetedResolution,
+  isMobileViewportAdjusted,
+}: GameOverScreenProps) {
   const [playerName, setPlayerName] = useState("")
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -96,7 +102,9 @@ export default function GameOverScreen({ score, onPlayAgain, isTargetedResolutio
   }
 
   return (
-    <div className={`${styles.gameOverScreen} ${isTargetedResolution ? styles.targetedResolution : ""}`}>
+    <div
+      className={`${styles.gameOverScreen} ${isTargetedResolution ? styles.targetedResolution : ""} ${isMobileViewportAdjusted ? styles.mobileViewportAdjusted : ""}`}
+    >
       <h2 className={styles.title}>Game Over</h2>
       <p className={styles.score}>Your Score: {score}</p>
       <div className={styles.saveScoreSection}>
@@ -120,7 +128,7 @@ export default function GameOverScreen({ score, onPlayAgain, isTargetedResolutio
         {savedSuccessfully && <p className={styles.saved}>Score saved successfully!</p>}
         {existingScore !== null && (
           <p className={styles.existingScore}>
-            You already have a higher score of {existingScore}. Keep playing to beat your best!!
+            You already have a higher score of {existingScore}. Keep playing to beat your best!
           </p>
         )}
       </div>

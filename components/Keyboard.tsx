@@ -9,6 +9,7 @@ interface KeyboardProps {
   totalAttempts: number
   disabled: boolean
   isTargetedResolution: boolean
+  isMobileViewportAdjusted: boolean
 }
 
 export default function Keyboard({
@@ -17,6 +18,7 @@ export default function Keyboard({
   totalAttempts,
   disabled,
   isTargetedResolution,
+  isMobileViewportAdjusted,
 }: KeyboardProps) {
   const [openControl, setOpenControl] = useState<"music" | "effects" | null>(null)
 
@@ -41,7 +43,9 @@ export default function Keyboard({
   }, [openControl])
 
   return (
-    <div className={`${styles.keyboard} ${isTargetedResolution ? styles.targetedResolution : ""}`}>
+    <div
+      className={`${styles.keyboard} ${isTargetedResolution ? styles.targetedResolution : ""} ${isMobileViewportAdjusted ? styles.mobileViewportAdjusted : ""}`}
+    >
       {keys.map((row, rowIndex) => (
         <div key={rowIndex} className={styles.row}>
           {row.map((key, index) => {

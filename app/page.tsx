@@ -62,6 +62,7 @@ export default function Game() {
   const [isGodMode, setIsGodMode] = useState(false)
   const [godModePressesLeft, setGodModePressesLeft] = useState(0)
   const [isTargetedResolution, setIsTargetedResolution] = useState(false)
+  const [isMobileViewportAdjusted, setIsMobileViewportAdjusted] = useState(false)
 
   const lastKeyPressTime = useRef(0)
   const processingGuess = useRef(false)
@@ -159,6 +160,18 @@ export default function Game() {
     checkResolution()
     window.addEventListener("resize", checkResolution)
     return () => window.removeEventListener("resize", checkResolution)
+  }, [])
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window !== "undefined") {
+        setIsMobileViewportAdjusted(window.innerHeight < 500)
+      }
+    }
+
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
   }, [])
 
   const initializeGame = async () => {
@@ -449,6 +462,7 @@ export default function Game() {
     setWordComplexityMultiplier(1)
     setIsGodMode(false)
     setGodModePressesLeft(0)
+    setIsMobileViewportAdjusted(false)
   }
 
   useEffect(() => {
@@ -479,11 +493,17 @@ export default function Game() {
   return (
     <>
       <AppInitializer />
-      <div className={`${styles.gameWrapper} ${isTargetedResolution ? styles.targetedResolution : ""}`}>
+      <div
+        className={`${styles.gameWrapper} ${isTargetedResolution ? styles.targetedResolution : ""} ${isMobileViewportAdjusted ? styles.mobileViewportAdjust : ""}`}
+      >
         <div className={styles.gameContainer}>
           <div className={styles.fullHeightContent}>
             {gameState === "start" && (
-              <StartScreen onStartGame={initializeGame} isTargetedResolution={isTargetedResolution} />
+              <StartScreen
+                onStartGame={initializeGame}
+                isTargetedResolution={isTargetedResolution}
+                isMobileViewportAdjusted={isMobileViewportAdjusted}
+              />
             )}
             {gameState === "loading" && <LoadingScreen />}
             {(gameState === "transition" || gameState === "playing" || isGameOverAnimating) && (
@@ -507,6 +527,7 @@ export default function Game() {
                   isGodMode={isGodMode}
                   godModePressesLeft={godModePressesLeft}
                   isTargetedResolution={isTargetedResolution}
+                  isMobileViewportAdjusted={isMobileViewportAdjusted}
                 />
                 <Keyboard
                   onKeyPress={handleKeyPress}
@@ -514,6 +535,7 @@ export default function Game() {
                   totalAttempts={totalAttempts}
                   disabled={isGetReadyPhase || isGameOverAnimating}
                   isTargetedResolution={isTargetedResolution}
+                  isMobileViewportAdjusted={isMobileViewportAdjusted}
                 />
               </>
             )}
@@ -522,6 +544,7 @@ export default function Game() {
                 score={Math.max(finalScore, score)}
                 onPlayAgain={handlePlayAgain}
                 isTargetedResolution={isTargetedResolution}
+                isMobileViewportAdjusted={isMobileViewportAdjusted}
               />
             )}
           </div>

@@ -5,7 +5,7 @@
   gap: 0.5rem;
   width: 100%;
   max-width: 500px;
-  margin-top: auto;
+  margin: 0 auto; /* Updated margin */
   padding: 0.5rem;
   position: relative;
 }

@@ -6,9 +6,10 @@ import styles from "@/styles/StartScreen.module.css"
 interface StartScreenProps {
   onStartGame: () => Promise<void>
   isTargetedResolution: boolean
+  isMobileViewportAdjusted: boolean
 }
 
-export default function StartScreen({ onStartGame, isTargetedResolution }: StartScreenProps) {
+export default function StartScreen({ onStartGame, isTargetedResolution, isMobileViewportAdjusted }: StartScreenProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [revealedLetters, setRevealedLetters] = useState<string[]>([])
   const fullTitle = "LEXILAB"
@@ -52,7 +53,9 @@ export default function StartScreen({ onStartGame, isTargetedResolution }: Start
   }
 
   return (
-    <div className={`${styles.startScreen} ${isTargetedResolution ? styles.targetedResolution : ""}`}>
+    <div
+      className={`${styles.startScreen} ${isTargetedResolution ? styles.targetedResolution : ""} ${isMobileViewportAdjusted ? styles.mobileViewportAdjusted : ""}`}
+    >
       <div className={styles.content}>
         <div className={styles.gameTitleContainer}>
           <h1 className={styles.gameTitle}>
