@@ -6,6 +6,7 @@ import Keyboard from "@/components/Keyboard"
 import LoadingScreen from "@/components/LoadingScreen"
 import StartScreen from "@/components/StartScreen"
 import GameOverScreen from "@/components/GameOverScreen"
+import DevOverlay from "@/components/DevOverlay"
 import { startGame, getFinalScore } from "@/utils/gameUtils"
 import styles from "@/styles/Game.module.css"
 import AppInitializer from "@/components/AppInitializer"
@@ -20,6 +21,10 @@ import {
   playGetReadyBeep,
   playLevelCompletionFanfare,
   playGoSound,
+  playGodModeCorrectLetterSound,
+  playGodModeIncorrectLetterSound,
+  playGodModeEnterSound,
+  playGodModeExitSound,
 } from "@/utils/sounds"
 
 type GameState = "loading" | "start" | "transition" | "playing" | "gameOver"
@@ -35,6 +40,35 @@ interface GameStateData {
   correctLetters?: string[]
 }
 
+const letterFrequency = {
+  E: 11.1607,
+  A: 8.4966,
+  R: 7.5809,
+  I: 7.5448,
+  O: 7.1635,
+  T: 6.9509,
+  N: 6.6544,
+  S: 5.7351,
+  L: 5.4893,
+  C: 4.5388,
+  U: 3.6308,
+  D: 3.3844,
+  P: 3.1671,
+  M: 3.0129,
+  H: 3.0034,
+  G: 2.4705,
+  B: 2.072,
+  F: 1.8121,
+  Y: 1.7779,
+  W: 1.2899,
+  K: 1.1016,
+  V: 1.0074,
+  X: 0.2902,
+  Z: 0.2722,
+  J: 0.1965,
+  Q: 0.1962,
+}
+
 export default function Game() {
   const [gameState, setGameState] = useState<GameState>("loading")
   const [error, setError] = useState<{ message: string; details?: string } | null>(null)
@@ -47,7 +81,7 @@ export default function Game() {
   const [correctKeys, setCorrectKeys] = useState<Set<string>>(new Set())
   const [timeRemaining, setTimeRemaining] = useState(120)
   const [baseMultiplier, setBaseMultiplier] = useState(1)
-  const [timeMultiplier, setTimeMultiplier] = useState(2)
+  const [timeMultiplier, setTimeMultiplier] = useState(1.5)
   const [showAnimation, setShowAnimation] = useState(false)
   const [finalScore, setFinalScore] = useState(0)
   const [level, setLevel] = useState(1)
@@ -63,6 +97,7 @@ export default function Game() {
   const [godModePressesLeft, setGodModePressesLeft] = useState(0)
   const [isTargetedResolution, setIsTargetedResolution] = useState(false)
   const [isMobileViewportAdjusted, setIsMobileViewportAdjusted] = useState(false)
+  const [showDevOverlay, setShowDevOverlay] = useState(false)
 
   const lastKeyPressTime = useRef(0)
   const processingGuess = useRef(false)
@@ -133,9 +168,10 @@ export default function Game() {
           return prevTime - 1
         })
 
-        setTimeMultiplier((prevMultiplier) => {
+        setTimeMultiplier(() => {
           if (timeRemaining > levelDuration - 60) {
-            return Math.max(1, prevMultiplier - 1 / 60)
+            // Calculate a value between 1.5 and 1 based on the time remaining
+            return 1 + (timeRemaining - (levelDuration - 60)) / 120
           }
           return 1
         })
@@ -193,7 +229,7 @@ export default function Game() {
       updateGameState(initialState)
 
       setLevelDuration(120)
-      setTimeMultiplier(2)
+      setTimeMultiplier(1.5)
 
       console.log("Starting Get Ready phase")
       setIsGetReadyPhase(true)
@@ -232,6 +268,7 @@ export default function Game() {
   const startNewWord = useCallback(
     async (currentGameId: string) => {
       console.log("Starting new word for game ID:", currentGameId)
+      console.log("Current God Mode state before reset:", isGodMode)
       try {
         if (!currentGameId) {
           throw new Error("Game ID is not set")
@@ -251,8 +288,7 @@ export default function Game() {
           throw new Error("Invalid data received from server")
         }
 
-        console.log("New word received:", data.word)
-        console.log("New word set:", data.word)
+        console.log("New word received and set:", data.word)
         setCurrentWord(data.word.toUpperCase())
         setCurrentHint(data.hint)
         setUsedWords((prevUsedWords) => [...prevUsedWords, data.word.toUpperCase()])
@@ -261,10 +297,11 @@ export default function Game() {
         const newLevelDuration = Math.max(60, levelDuration - 5)
         setLevelDuration(newLevelDuration)
         setTimeRemaining(newLevelDuration)
-        setTimeMultiplier(2)
+        setTimeMultiplier(1.5)
         setBaseMultiplier(1) // Reset base multiplier to 1
-        setIsGodMode(false)
-        setGodModePressesLeft(0)
+        setIsGodMode(false) // Reset God Mode
+        setGodModePressesLeft(0) // Reset God Mode presses
+        console.log("God Mode reset for new word")
 
         setIsGetReadyPhase(true)
         setShowGetReadyAnimation(true)
@@ -296,7 +333,7 @@ export default function Game() {
         })
       }
     },
-    [usedWords, levelDuration],
+    [usedWords, levelDuration, isGodMode],
   )
 
   const updateGameState = (state: GameStateData) => {
@@ -327,6 +364,9 @@ export default function Game() {
 
   const handleKeyPress = useCallback(
     (key: string) => {
+      console.log("handleKeyPress called with key:", key)
+      console.log("Current multiplier:", baseMultiplier * timeMultiplier * wordComplexityMultiplier)
+      console.log("Current God Mode state:", isGodMode)
       const now = Date.now()
       if (now - lastKeyPressTime.current < 100 || processingGuess.current || isGetReadyPhase) {
         return
@@ -343,42 +383,59 @@ export default function Game() {
       const newUsedKeys = new Set(usedKeys).add(key)
       const newCorrectKeys = isCorrect ? new Set(correctKeys).add(key) : new Set(correctKeys)
       let newAttempts = totalAttempts
-      if (!isCorrect && (!isGodMode || godModePressesLeft === 0)) {
-        newAttempts -= 1
+
+      // Play appropriate sound based on correctness and God Mode state
+      if (isGodMode) {
+        if (isCorrect) {
+          playGodModeCorrectLetterSound()
+        } else {
+          playGodModeIncorrectLetterSound()
+        }
+      } else {
+        if (isCorrect) {
+          playCorrectLetterSound()
+        } else {
+          playIncorrectLetterSound()
+        }
       }
-      const letterFrequency = currentWord.split(key).length - 1
+
+      // Update God Mode logic
+      if (!isCorrect) {
+        if (isGodMode && godModePressesLeft > 0) {
+          setGodModePressesLeft((prev) => prev - 1)
+        } else {
+          newAttempts -= 1
+        }
+      }
+
+      // Calculate currentMultiplier before using it
       const currentMultiplier = baseMultiplier * timeMultiplier * wordComplexityMultiplier
-      const newScore = score + (isCorrect ? 10 * letterFrequency * currentMultiplier : 0)
-      const newBaseMultiplier = isCorrect ? baseMultiplier + 0.1 : Math.max(1, baseMultiplier - 0.1)
+
+      // Update God Mode activation logic
+      if (currentMultiplier >= 3.3 && !isGodMode) {
+        console.log("God Mode activated! Current Multiplier:", currentMultiplier)
+        setIsGodMode(true)
+        setGodModePressesLeft(5)
+        playGodModeEnterSound()
+      }
+
+      // Update God Mode deactivation logic
+      if (isGodMode && godModePressesLeft === 0) {
+        console.log("God Mode deactivated due to no more presses left")
+        setIsGodMode(false)
+        playGodModeExitSound()
+      }
+
+      // Adjusted scoring system
+      const letterScore = isCorrect ? Math.round(1 / (letterFrequency[key as keyof typeof letterFrequency] / 100)) : 0
+      const newScore = score + letterScore * currentMultiplier
+      const newBaseMultiplier = isCorrect ? Math.min(3, baseMultiplier + 0.02) : Math.max(1, baseMultiplier - 0.01)
 
       setUsedKeys(new Set(newUsedKeys))
       setCorrectKeys(new Set(newCorrectKeys))
       setTotalAttempts(newAttempts)
       setScore(Math.round(newScore))
       setBaseMultiplier(newBaseMultiplier)
-
-      // Check if GOD mode should be activated
-      if (newBaseMultiplier >= 4.85 && !isGodMode) {
-        setIsGodMode(true)
-        setGodModePressesLeft(5)
-      }
-
-      // Decrease GOD mode presses if active
-      if (isGodMode && !isCorrect) {
-        setGodModePressesLeft((prev) => {
-          const newPresses = prev - 1
-          if (newPresses === 0) {
-            setIsGodMode(false)
-          }
-          return newPresses
-        })
-      }
-
-      if (isCorrect) {
-        playCorrectLetterSound()
-      } else {
-        playIncorrectLetterSound()
-      }
 
       const wordCompleted = currentWord
         .split("")
@@ -446,7 +503,7 @@ export default function Game() {
     setCorrectKeys(new Set())
     setTimeRemaining(120)
     setBaseMultiplier(1)
-    setTimeMultiplier(2)
+    setTimeMultiplier(1.5)
     setLevel(1)
     setError(null)
     setCurrentWord("")
@@ -463,6 +520,7 @@ export default function Game() {
     setIsGodMode(false)
     setGodModePressesLeft(0)
     setIsMobileViewportAdjusted(false)
+    setShowDevOverlay(false)
   }
 
   useEffect(() => {
@@ -471,6 +529,9 @@ export default function Game() {
       if (/^[A-Z]$/.test(key)) {
         handleKeyPress(key)
       }
+      if (event.key === "F9") {
+        setShowDevOverlay((prev) => !prev)
+      }
     }
 
     if (gameState === "playing") {
@@ -478,6 +539,11 @@ export default function Game() {
       return () => window.removeEventListener("keydown", handleKeyDown)
     }
   }, [gameState, handleKeyPress])
+
+  useEffect(() => {
+    console.log("God Mode state changed:", isGodMode)
+    console.log("God Mode presses left:", godModePressesLeft)
+  }, [isGodMode, godModePressesLeft])
 
   if (error) {
     return (
@@ -493,6 +559,15 @@ export default function Game() {
   return (
     <>
       <AppInitializer />
+      {showDevOverlay && (
+        <DevOverlay
+          baseMultiplier={baseMultiplier}
+          timeMultiplier={timeMultiplier}
+          wordComplexityMultiplier={wordComplexityMultiplier}
+          score={score}
+          isGodMode={isGodMode}
+        />
+      )}
       <div
         className={`${styles.gameWrapper} ${isTargetedResolution ? styles.targetedResolution : ""} ${isMobileViewportAdjusted ? styles.mobileViewportAdjust : ""}`}
       >

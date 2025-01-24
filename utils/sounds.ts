@@ -162,6 +162,26 @@ class SoundManager {
     this.generateTone(880, 0.1, 0.3, "square")
     setTimeout(() => this.generateTone(1320, 0.2, 0.3, "square"), 100)
   }
+
+  playGodModeCorrectLetterSound() {
+    this.generateTone(1320, 0.1, 0.2, "sine")
+  }
+
+  playGodModeIncorrectLetterSound() {
+    this.generateTone(165, 0.1, 0.2, "sawtooth")
+  }
+
+  playGodModeEnterSound() {
+    this.generateTone(880, 0.1, 0.3, "sine")
+    setTimeout(() => this.generateTone(1320, 0.1, 0.3, "sine"), 100)
+    setTimeout(() => this.generateTone(1760, 0.1, 0.3, "sine"), 200)
+  }
+
+  playGodModeExitSound() {
+    this.generateTone(1760, 0.1, 0.3, "sine")
+    setTimeout(() => this.generateTone(1320, 0.1, 0.3, "sine"), 100)
+    setTimeout(() => this.generateTone(880, 0.1, 0.3, "sine"), 200)
+  }
 }
 
 export const soundManager = new SoundManager()
@@ -252,5 +272,21 @@ export function playLevelCompletionFanfare() {
 
 export function playGoSound() {
   soundManager.playGoSound()
+}
+
+export function playGodModeCorrectLetterSound() {
+  soundManager.playGodModeCorrectLetterSound()
+}
+
+export function playGodModeIncorrectLetterSound() {
+  soundManager.playGodModeIncorrectLetterSound()
+}
+
+export function playGodModeEnterSound() {
+  soundManager.playGodModeEnterSound()
+}
+
+export function playGodModeExitSound() {
+  soundManager.playGodModeExitSound()
 }
 
