@@ -213,55 +213,65 @@ export default function Game() {
   const initializeGame = async () => {
     console.log("Initializing game")
     setGameState("transition")
-    try {
-      if (!isSoundInitialized) {
-        console.log("Initializing sound manager")
-        await initializeSounds()
-        setIsSoundInitialized(true)
-        setAutoplayAllowed(true)
-        await changeBackgroundMusic()
-        console.log("Sound manager initialized")
-      }
-      console.log("Starting new game")
-      const { gameId, initialState } = await startGame()
-      console.log("Game started with ID:", gameId)
-      setGameId(gameId)
-      updateGameState(initialState)
+    let retries = 3
+    while (retries > 0) {
+      try {
+        if (!isSoundInitialized) {
+          console.log("Initializing sound manager")
+          await initializeSounds()
+          setIsSoundInitialized(true)
+          setAutoplayAllowed(true)
+          await changeBackgroundMusic()
+          console.log("Sound manager initialized")
+        }
+        console.log("Starting new game")
+        const { gameId, initialState } = await startGame()
+        console.log("Game started with ID:", gameId)
+        setGameId(gameId)
+        updateGameState(initialState)
 
-      setLevelDuration(120)
-      setTimeMultiplier(1.5)
+        setLevelDuration(120)
+        setTimeMultiplier(1.5)
 
-      console.log("Starting Get Ready phase")
-      setIsGetReadyPhase(true)
-      setShowGetReadyAnimation(true)
+        console.log("Starting Get Ready phase")
+        setIsGetReadyPhase(true)
+        setShowGetReadyAnimation(true)
 
-      // Play get ready beeps
-      for (let i = 0; i < 5; i++) {
+        // Play get ready beeps
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => {
+            playGetReadyBeep()
+          }, i * 1000)
+        }
+
+        // Play "GO!" sound after the countdown
         setTimeout(() => {
-          playGetReadyBeep()
-        }, i * 1000)
+          playGoSound()
+        }, 5000)
+
+        // Use a Promise to ensure the full duration of the Get Ready phase
+        await new Promise((resolve) => setTimeout(resolve, 6000))
+
+        console.log("Transition to playing state")
+        setGameState("playing")
+        setIsGetReadyPhase(false)
+        setShowGetReadyAnimation(false)
+        setTimeRemaining(120)
+        return // Exit the function if successful
+      } catch (error) {
+        console.error("Error initializing game:", error)
+        retries--
+        if (retries === 0) {
+          setError({
+            message: "Failed to initialize game",
+            details: error instanceof Error ? error.message : "Unknown error. Please refresh the page and try again.",
+          })
+          setGameState("start")
+        } else {
+          console.log(`Retrying... (${retries} attempts left)`)
+          await new Promise((resolve) => setTimeout(resolve, 2000)) // Wait 2 seconds before retrying
+        }
       }
-
-      // Play "GO!" sound after the countdown
-      setTimeout(() => {
-        playGoSound()
-      }, 5000)
-
-      // Use a Promise to ensure the full duration of the Get Ready phase
-      await new Promise((resolve) => setTimeout(resolve, 6000))
-
-      console.log("Transition to playing state")
-      setGameState("playing")
-      setIsGetReadyPhase(false)
-      setShowGetReadyAnimation(false)
-      setTimeRemaining(120)
-    } catch (error) {
-      console.error("Error initializing game:", error)
-      setError({
-        message: "Failed to initialize game",
-        details: error instanceof Error ? error.message : "Unknown error",
-      })
-      setGameState("start")
     }
   }
 
@@ -551,7 +561,14 @@ export default function Game() {
         <h1>ERROR</h1>
         <p>{error.message.toUpperCase()}</p>
         {error.details && <p>{error.details.toUpperCase()}</p>}
-        <button onClick={handlePlayAgain}>TRY AGAIN</button>
+        <button
+          onClick={() => {
+            setError(null)
+            initializeGame()
+          }}
+        >
+          TRY AGAIN
+        </button>
       </div>
     )
   }
