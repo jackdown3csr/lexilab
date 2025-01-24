@@ -481,56 +481,50 @@ export default function Game() {
       <AppInitializer />
       <div className={`${styles.gameWrapper} ${isTargetedResolution ? styles.targetedResolution : ""}`}>
         <div className={styles.gameContainer}>
-          {gameState === "start" && (
-            <div className={styles.fullHeightContainer}>
+          <div className={styles.fullHeightContent}>
+            {gameState === "start" && (
               <StartScreen onStartGame={initializeGame} isTargetedResolution={isTargetedResolution} />
-            </div>
-          )}
-          {gameState === "loading" && (
-            <div className={styles.loadingContainer}>
-              <LoadingScreen />
-            </div>
-          )}
-          {(gameState === "transition" || gameState === "playing" || isGameOverAnimating) && (
-            <div className={styles.gameContent}>
-              <GameArea
-                currentWord={currentWord}
-                currentHint={currentHint}
-                score={score}
-                correctKeys={correctKeys}
-                timeRemaining={timeRemaining}
-                multiplier={baseMultiplier * timeMultiplier * wordComplexityMultiplier}
-                showAnimation={showAnimation}
-                totalAttempts={totalAttempts}
-                level={level}
-                isGetReadyPhase={isGetReadyPhase}
-                showGetReadyAnimation={showGetReadyAnimation}
-                setShowGetReadyAnimation={setShowGetReadyAnimation}
-                showGameOverAnimation={isGameOverAnimating}
-                levelDuration={levelDuration}
-                bonusLifeEarned={bonusLifeEarned}
-                isGodMode={isGodMode}
-                godModePressesLeft={godModePressesLeft}
-                isTargetedResolution={isTargetedResolution}
-              />
-              <Keyboard
-                onKeyPress={handleKeyPress}
-                usedKeys={usedKeys}
-                totalAttempts={totalAttempts}
-                disabled={isGetReadyPhase || isGameOverAnimating}
-                isTargetedResolution={isTargetedResolution}
-              />
-            </div>
-          )}
-          {gameState === "gameOver" && !isGameOverAnimating && (
-            <div className={styles.gameContent}>
+            )}
+            {gameState === "loading" && <LoadingScreen />}
+            {(gameState === "transition" || gameState === "playing" || isGameOverAnimating) && (
+              <>
+                <GameArea
+                  currentWord={currentWord}
+                  currentHint={currentHint}
+                  score={score}
+                  correctKeys={correctKeys}
+                  timeRemaining={timeRemaining}
+                  multiplier={baseMultiplier * timeMultiplier * wordComplexityMultiplier}
+                  showAnimation={showAnimation}
+                  totalAttempts={totalAttempts}
+                  level={level}
+                  isGetReadyPhase={isGetReadyPhase}
+                  showGetReadyAnimation={showGetReadyAnimation}
+                  setShowGetReadyAnimation={setShowGetReadyAnimation}
+                  showGameOverAnimation={isGameOverAnimating}
+                  levelDuration={levelDuration}
+                  bonusLifeEarned={bonusLifeEarned}
+                  isGodMode={isGodMode}
+                  godModePressesLeft={godModePressesLeft}
+                  isTargetedResolution={isTargetedResolution}
+                />
+                <Keyboard
+                  onKeyPress={handleKeyPress}
+                  usedKeys={usedKeys}
+                  totalAttempts={totalAttempts}
+                  disabled={isGetReadyPhase || isGameOverAnimating}
+                  isTargetedResolution={isTargetedResolution}
+                />
+              </>
+            )}
+            {gameState === "gameOver" && !isGameOverAnimating && (
               <GameOverScreen
                 score={Math.max(finalScore, score)}
                 onPlayAgain={handlePlayAgain}
                 isTargetedResolution={isTargetedResolution}
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </>

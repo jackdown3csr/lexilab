@@ -16,7 +16,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   max-width: 100%;
   background-color: rgba(26, 26, 26, 0.8);
   border-radius: 0;
@@ -108,6 +108,12 @@
   overflow-y: auto;
 }
 
+.fullHeightContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 @media (min-width: 601px) {
   .gameWrapper {
     padding: 0.5rem;
@@ -122,8 +128,15 @@
 }
 
 @media (max-width: 600px) {
+  .gameWrapper {
+    padding: 0;
+  }
   .gameContainer {
     border-radius: 0;
+    height: 100vh;
+  }
+  .gameContent {
+    height: 100%;
   }
 }
 
