@@ -1,0 +1,89 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: var(--background-color);
+  padding: 2rem;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 0 20px var(--glow-color);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.largeModal {
+  width: 90%;
+  max-width: 800px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.modalTitle {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.modalContent h2 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.modalContent ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.modalContent li {
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.modalContent li::before {
+  content: "•";
+  color: var(--primary-color);
+  position: absolute;
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .largeModal {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .modalTitle {
+    font-size: 1.3rem;
+  }
+
+  .modalContent h2 {
+    font-size: 1.2rem;
+  }
+
+  .modalContent li {
+    font-size: 0.9rem;
+  }
+}
+

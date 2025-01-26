@@ -11,13 +11,18 @@
   flex-grow: 1;
 }
 
+.scoreInfoGridContainer {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 1rem;
+}
+
 .scoreInfoGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
   width: 100%;
-  max-width: 300px;
-  margin-bottom: 1rem;
 }
 
 .scoreItem {
@@ -163,71 +168,6 @@
   align-items: center;
   box-shadow: 0 0 10px var(--glow-color);
   animation: fadeInUp 0.5s ease-out;
-}
-
-.wordCompletionAnimation,
-.getReadyAnimation,
-.gameOverAnimation {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  z-index: 10;
-}
-
-.wordCompletionAnimation {
-  animation: fadeInOut 2s ease-in-out;
-}
-
-.getReadyAnimation {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.8);
-  z-index: 10;
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.getReadyAnimation span {
-  font-size: 3rem;
-  font-weight: bold;
-  color: var(--primary-color);
-  text-shadow: 0 0 20px var(--glow-color);
-}
-
-.getReadyAnimation .countdown {
-  font-size: 6rem;
-  margin-top: 1rem;
-  animation: pulse 1s infinite alternate;
-}
-
-.getReadyAnimation.fadeOut {
-  animation: fadeOut 1s ease-in-out forwards;
-}
-
-.gameOverAnimation {
-  animation: fadeInOut 3s ease-in-out;
-}
-
-.wordCompletionAnimation span,
-.getReadyAnimation span,
-.gameOverAnimation span {
-  font-size: 3rem;
-  font-weight: bold;
-  color: var(--primary-color);
-  text-shadow: 0 0 20px var(--glow-color);
-  animation: pulse 0.5s infinite alternate;
 }
 
 @keyframes fadeIn {
@@ -385,75 +325,6 @@
   .letter.longWord {
     font-size: 0.9em;
     margin: 0 0.05rem;
-  }
-}
-
-.bonusLifeNotification {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 255, 0, 0.2);
-  color: var(--text-color);
-  padding: 10px 20px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 1000;
-}
-
-.bonusLifeIcon {
-  color: var(--primary-color);
-}
-
-.levelChangeNotification {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(244, 151, 86, 0.2);
-  color: var(--text-color);
-  padding: 10px 20px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 1000;
-}
-
-.godModeNotification {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(255, 215, 0, 0.2);
-  color: var(--text-color);
-  padding: 10px 20px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  animation: fadeInOut 3s ease-in-out;
-  z-index: 1000;
-}
-
-.godModeIcon {
-  color: gold;
-}
-
-@keyframes fadeInOut {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  10%,
-  90% {
-    opacity: 1;
   }
 }
 
@@ -618,5 +489,126 @@
   font-size: 0.8em;
   padding: 0.25rem 0.5rem;
   min-height: 2.5rem;
+}
+
+.notificationOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.notificationContent {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  padding: 1.5rem 2.5rem;
+  border-radius: 1rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 0 20px var(--glow-color);
+  animation: scaleIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notificationIcon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.godModeNotification,
+.lifeBonusNotification {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background-color: rgba(244, 151, 86, 0.8);
+  color: #000;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+  animation: pulse 1.5s infinite alternate;
+  box-shadow: 0 0 10px rgba(244, 151, 86, 0.5);
+  text-transform: uppercase;
+}
+
+.godModeNotification {
+  top: 0;
+}
+
+.lifeBonusNotification {
+  top: 40px; /* Position it below the God Mode notification */
+}
+
+.godModeNotification .icon,
+.lifeBonusNotification .icon {
+  margin-right: 8px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .godModeNotification,
+  .lifeBonusNotification {
+    font-size: 0.7rem;
+    padding: 6px 8px;
+  }
+}
+
+@keyframes beat {
+  to {
+    transform: scale(1.2);
+  }
+}
+
+@media (max-width: 480px) {
+  .lifeBonusNotification {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+
+  .lifeBonusNotification .text {
+    font-size: 0.9rem;
+  }
 }
 

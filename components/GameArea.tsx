@@ -22,6 +22,46 @@ interface GameAreaProps {
   godModePressesLeft: number
   isTargetedResolution: boolean
   isMobileViewportAdjusted: boolean
+  longWordBonus?: number | null
+}
+
+const NotificationOverlay: React.FC<{ message: string; icon?: React.ReactNode; isGodMode?: boolean }> = ({
+  message,
+  icon,
+  isGodMode,
+}) => (
+  <div className={`${styles.notificationOverlay} ${isGodMode ? styles.godModeOverlay : ""}`}>
+    <div className={`${styles.notificationContent} ${isGodMode ? styles.godModeContent : ""}`}>
+      {icon && <span className={styles.notificationIcon}>{icon}</span>}
+      <span>{message}</span>
+    </div>
+  </div>
+)
+
+const GameInfoNotification: React.FC<{ isGodMode: boolean; godModePressesLeft: number; bonusLifeEarned: boolean }> = ({
+  isGodMode,
+  godModePressesLeft,
+  bonusLifeEarned,
+}) => {
+  if (!isGodMode && !bonusLifeEarned) return null
+  return (
+    <div className={styles.gameInfoNotification}>
+      {isGodMode && (
+        <div className={styles.godModeNotification}>
+          <Sparkles className={styles.godModeIcon} />
+          <span>
+            GOD MODE: {godModePressesLeft} PRESS{godModePressesLeft !== 1 ? "ES" : ""} LEFT
+          </span>
+        </div>
+      )}
+      {bonusLifeEarned && (
+        <div className={styles.lifeBonusNotification}>
+          <Heart className={styles.icon} />
+          <span>BONUS LIFE EARNED!</span>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function GameArea({
@@ -44,11 +84,10 @@ export default function GameArea({
   godModePressesLeft,
   isTargetedResolution,
   isMobileViewportAdjusted,
+  longWordBonus = null,
 }: GameAreaProps) {
   const [displayMultiplier, setDisplayMultiplier] = useState(multiplier)
-  const [animatedScore, setAnimatedScore] = useState(score)
   const [countdown, setCountdown] = useState(5)
-  const [showGo, setShowGo] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -62,23 +101,10 @@ export default function GameArea({
   }, [multiplier])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setAnimatedScore((prev) => {
-        const diff = score - prev
-        if (Math.abs(diff) < 1) return score
-        return prev + Math.sign(diff) * Math.ceil(Math.abs(diff) * 0.1)
-      })
-    }, 50)
-    return () => clearInterval(interval)
-  }, [score])
-
-  useEffect(() => {
-    console.log("Get Ready phase changed:", isGetReadyPhase)
     if (isGetReadyPhase) {
       setCountdown(5)
       const timer = setInterval(() => {
         setCountdown((prev) => {
-          console.log("Countdown:", prev)
           if (prev > 0) {
             return prev - 1
           } else {
@@ -93,9 +119,7 @@ export default function GameArea({
 
   useEffect(() => {
     if (countdown === 0 && isGetReadyPhase) {
-      setShowGo(true)
       setTimeout(() => {
-        setShowGo(false)
         setShowGetReadyAnimation(false)
       }, 1000)
     }
@@ -147,27 +171,34 @@ export default function GameArea({
     <div
       className={`${styles.gameArea} ${isTargetedResolution ? styles.targetedResolution : ""} ${isMobileViewportAdjusted ? styles.mobileViewportAdjusted : ""}`}
     >
-      <div className={`${styles.scoreInfoGrid} ${isMobileViewportAdjusted ? styles.mobileAdjusted : ""}`}>
-        <div className={styles.scoreItem}>
-          <Star className={styles.scoreIcon} />
-          <span className={styles.label}>SCORE</span>
-          <span className={styles.value}>{Math.round(animatedScore)}</span>
-        </div>
-        <div className={styles.scoreItem}>
-          <Heart className={styles.scoreIcon} />
-          <span className={styles.label}>LIVES</span>
-          <span className={styles.value}>{totalAttempts}</span>
-        </div>
-        <div className={styles.scoreItem}>
-          <Shield className={styles.scoreIcon} />
-          <span className={styles.label}>LEVEL</span>
-          <span className={styles.value}>{level}</span>
-        </div>
-        <div className={styles.scoreItem}>
-          <Zap className={styles.scoreIcon} />
-          <span className={styles.label}>MULTIPLIER</span>
-          <div className={styles.multiplierStars}>{renderMultiplierStars()}</div>
-          <span className={styles.multiplierValue}>x{displayMultiplier.toFixed(2)}</span>
+      <div className={`${styles.scoreInfoGridContainer} ${isMobileViewportAdjusted ? styles.mobileAdjusted : ""}`}>
+        <GameInfoNotification
+          isGodMode={isGodMode}
+          godModePressesLeft={godModePressesLeft}
+          bonusLifeEarned={bonusLifeEarned}
+        />
+        <div className={styles.scoreInfoGrid}>
+          <div className={styles.scoreItem}>
+            <Star className={styles.scoreIcon} />
+            <span className={styles.label}>SCORE</span>
+            <span className={styles.value}>{score}</span>
+          </div>
+          <div className={styles.scoreItem}>
+            <Heart className={styles.scoreIcon} />
+            <span className={styles.label}>LIVES</span>
+            <span className={styles.value}>{totalAttempts}</span>
+          </div>
+          <div className={styles.scoreItem}>
+            <Shield className={styles.scoreIcon} />
+            <span className={styles.label}>LEVEL</span>
+            <span className={styles.value}>{level}</span>
+          </div>
+          <div className={styles.scoreItem}>
+            <Zap className={styles.scoreIcon} />
+            <span className={styles.label}>MULTIPLIER</span>
+            <div className={styles.multiplierStars}>{renderMultiplierStars()}</div>
+            <span className={styles.multiplierValue}>x{displayMultiplier.toFixed(2)}</span>
+          </div>
         </div>
       </div>
       <div className={styles.timeBonusContainer}>
@@ -187,39 +218,13 @@ export default function GameArea({
         </div>
         <div className={styles.hint}>{currentHint.toUpperCase()}</div>
       </div>
-      {showAnimation && (
-        <div className={styles.wordCompletionAnimation}>
-          <span>WELL DONE!</span>
-        </div>
+      {showAnimation && <NotificationOverlay message="WELL DONE!" icon={<Star />} />}
+      {(showGetReadyAnimation || isGetReadyPhase) && (
+        <NotificationOverlay message={countdown > 0 ? `GET READY! ${countdown}` : "GO!"} icon={<Clock />} />
       )}
-      {(showGetReadyAnimation || isGetReadyPhase || showGo) && (
-        <div className={`${styles.getReadyAnimation} ${!isGetReadyPhase && !showGo ? styles.fadeOut : ""}`}>
-          {countdown > 0 ? (
-            <>
-              <span>GET READY!</span>
-              <span className={styles.countdown}>{countdown}</span>
-            </>
-          ) : (
-            <span className={styles.goMessage}>GO!</span>
-          )}
-        </div>
-      )}
-      {showGameOverAnimation && (
-        <div className={styles.gameOverAnimation}>
-          <span>GAME OVER!</span>
-        </div>
-      )}
-      {bonusLifeEarned && (
-        <div className={styles.bonusLifeNotification}>
-          <Heart className={styles.bonusLifeIcon} />
-          <span>Bonus Life Earned!</span>
-        </div>
-      )}
-      {isGodMode && (
-        <div className={styles.godModeNotification}>
-          <Sparkles className={styles.godModeIcon} />
-          <span>GOD MODE: {godModePressesLeft} PRESSES LEFT</span>
-        </div>
+      {showGameOverAnimation && <NotificationOverlay message="GAME OVER!" icon={<Zap />} />}
+      {longWordBonus !== null && (
+        <NotificationOverlay message={`Long Word Bonus: +${longWordBonus} points!`} icon={<Star />} />
       )}
     </div>
   )

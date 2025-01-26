@@ -3,18 +3,18 @@ class SoundManager {
   private bgMusicTracks: string[] = ["/bgmusic1.mp3", "/bgmusic2.mp3", "/bgmusic3.mp3"]
   private isMusicMuted = false
   private isEffectsMuted = false
-  private isInitialized = false
+  public isInitialized = false
   private autoplayAllowed = false
   private musicVolume = 0.1 // 10% default volume for background music
   private effectsVolume = 0.5 // 50% default volume for sound effects
   private audioContext: AudioContext | null = null
+  private isPlaying = false
 
   async initialize() {
     if (this.isInitialized) return
 
     this.selectRandomBackgroundMusic()
     this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
-    console.log("Sound initialization complete")
 
     this.isInitialized = true
   }
@@ -25,10 +25,9 @@ class SoundManager {
     this.bgMusic = new Audio(selectedTrack)
     this.bgMusic.loop = true
     this.bgMusic.volume = this.musicVolume
-    console.log(`Selected background music: ${selectedTrack}`)
   }
 
-  setAutoplayAllowed(allowed: boolean) {
+  public setAutoplayAllowed(allowed: boolean) {
     this.autoplayAllowed = allowed
     if (allowed && !this.isMusicMuted) {
       this.playBackgroundMusic()
@@ -36,23 +35,38 @@ class SoundManager {
   }
 
   playBackgroundMusic() {
-    if (this.bgMusic && !this.isMusicMuted && this.autoplayAllowed) {
-      this.bgMusic.play()
+    if (this.bgMusic && !this.isMusicMuted && this.autoplayAllowed && !this.isPlaying) {
+      this.isPlaying = true
+      this.bgMusic.volume = this.musicVolume
+      this.bgMusic.play().catch((error) => {
+        console.error("Error playing background music:", error)
+        this.isPlaying = false
+      })
     }
   }
 
   pauseBackgroundMusic() {
-    if (this.bgMusic) {
+    if (this.bgMusic && this.isPlaying) {
       this.bgMusic.pause()
+      this.isPlaying = false
+    }
+  }
+
+  stopBackgroundMusic() {
+    if (this.bgMusic && this.isPlaying) {
+      this.bgMusic.pause()
+      this.bgMusic.currentTime = 0
+      this.isPlaying = false
     }
   }
 
   async changeBackgroundMusic() {
     if (this.bgMusic) {
-      this.bgMusic.pause()
+      this.pauseBackgroundMusic()
     }
     this.selectRandomBackgroundMusic()
     if (!this.isMusicMuted && this.autoplayAllowed) {
+      await new Promise((resolve) => setTimeout(resolve, 100)) // Add a small delay
       this.playBackgroundMusic()
     }
   }
@@ -60,7 +74,7 @@ class SoundManager {
   setMusicVolume(volume: number) {
     this.musicVolume = volume
     if (this.bgMusic) {
-      this.bgMusic.volume = volume
+      this.bgMusic.volume = this.isMusicMuted ? 0 : volume
     }
   }
 
@@ -68,19 +82,19 @@ class SoundManager {
     this.effectsVolume = volume
   }
 
-  toggleMusicMute() {
-    this.isMusicMuted = !this.isMusicMuted
+  toggleMusicMute(muted: boolean) {
+    this.isMusicMuted = muted
     if (this.bgMusic) {
       if (this.isMusicMuted) {
-        this.bgMusic.pause()
-      } else {
-        this.bgMusic.play()
+        this.pauseBackgroundMusic()
+      } else if (this.autoplayAllowed) {
+        this.playBackgroundMusic()
       }
     }
   }
 
-  toggleEffectsMute() {
-    this.isEffectsMuted = !this.isEffectsMuted
+  toggleEffectsMute(muted: boolean) {
+    this.isEffectsMuted = muted
   }
 
   getMusicMuted(): boolean {
@@ -103,8 +117,30 @@ class SoundManager {
     return this.effectsVolume
   }
 
+  public isAutoplayAllowed(): boolean {
+    return this.autoplayAllowed
+  }
+
+  public getBgMusic(): HTMLAudioElement | null {
+    return this.bgMusic
+  }
+
+  public getIsMusicMuted(): boolean {
+    return this.isMusicMuted
+  }
+
+  public getIsPlaying(): boolean {
+    return this.isPlaying
+  }
+
+  public setIsPlaying(value: boolean): void {
+    this.isPlaying = value
+  }
+
   private generateTone(frequency: number, duration: number, volume: number, type: OscillatorType = "sine") {
-    if (typeof window === "undefined" || this.isEffectsMuted || !this.audioContext) return
+    if (typeof window === "undefined" || this.isEffectsMuted || !this.audioContext) {
+      return
+    }
     const oscillator = this.audioContext.createOscillator()
     const gainNode = this.audioContext.createGain()
 
@@ -182,20 +218,46 @@ class SoundManager {
     setTimeout(() => this.generateTone(1320, 0.1, 0.3, "sine"), 100)
     setTimeout(() => this.generateTone(880, 0.1, 0.3, "sine"), 200)
   }
+
+  playBonusLifeSound() {
+    this.generateTone(880, 0.1, 0.3, "sine")
+    setTimeout(() => this.generateTone(1100, 0.1, 0.3, "sine"), 100)
+    setTimeout(() => this.generateTone(1320, 0.2, 0.3, "sine"), 200)
+  }
 }
 
 export const soundManager = new SoundManager()
 
 export async function initializeSounds() {
-  await soundManager.initialize()
+  if (!soundManager.isInitialized) {
+    await soundManager.initialize()
+  } else {
+  }
 }
 
 export function setAutoplayAllowed(allowed: boolean) {
   soundManager.setAutoplayAllowed(allowed)
+  if (allowed && !soundManager.getIsMusicMuted()) {
+    playBackgroundMusic()
+  }
 }
 
 export function playBackgroundMusic() {
-  soundManager.playBackgroundMusic()
+  if (
+    soundManager.getBgMusic() &&
+    !soundManager.getIsMusicMuted() &&
+    soundManager.isAutoplayAllowed() &&
+    !soundManager.getIsPlaying()
+  ) {
+    soundManager.setIsPlaying(true)
+    soundManager
+      .getBgMusic()!
+      .play()
+      .catch((error) => {
+        console.error("Error playing background music:", error)
+        soundManager.setIsPlaying(false)
+      })
+  }
 }
 
 export function pauseBackgroundMusic() {
@@ -214,20 +276,24 @@ export function setEffectsVolume(volume: number) {
   soundManager.setEffectsVolume(volume)
 }
 
-export function toggleMusicMute() {
-  soundManager.toggleMusicMute()
+export function toggleMusicMute(muted: boolean) {
+  soundManager.toggleMusicMute(muted)
 }
 
-export function toggleEffectsMute() {
-  soundManager.toggleEffectsMute()
+export function toggleEffectsMute(muted: boolean) {
+  soundManager.toggleEffectsMute(muted)
 }
 
 export function getMusicMuted(): boolean {
-  return soundManager.getMusicMuted()
+  const muted = soundManager.getMusicMuted()
+
+  return muted
 }
 
 export function getEffectsMuted(): boolean {
-  return soundManager.getEffectsMuted()
+  const muted = soundManager.getEffectsMuted()
+
+  return muted
 }
 
 export function isSoundManagerReady(): boolean {
@@ -262,7 +328,7 @@ export function getEffectsVolume(): number {
   return soundManager.getEffectsVolume()
 }
 
-export function playGetReadyBeep() {
+export function playGetReadyBeep(): void {
   soundManager.playGetReadyBeep()
 }
 
@@ -270,7 +336,7 @@ export function playLevelCompletionFanfare() {
   soundManager.playLevelCompletionFanfare()
 }
 
-export function playGoSound() {
+export function playGoSound(): void {
   soundManager.playGoSound()
 }
 
@@ -288,5 +354,13 @@ export function playGodModeEnterSound() {
 
 export function playGodModeExitSound() {
   soundManager.playGodModeExitSound()
+}
+
+export function stopBackgroundMusic() {
+  soundManager.stopBackgroundMusic()
+}
+
+export function playBonusLifeSound() {
+  soundManager.playBonusLifeSound()
 }
 

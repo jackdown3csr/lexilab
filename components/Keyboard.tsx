@@ -10,6 +10,7 @@ interface KeyboardProps {
   disabled: boolean
   isTargetedResolution: boolean
   isMobileViewportAdjusted: boolean
+  godModeReady: boolean
 }
 
 export default function Keyboard({
@@ -19,18 +20,26 @@ export default function Keyboard({
   disabled,
   isTargetedResolution,
   isMobileViewportAdjusted,
+  godModeReady,
 }: KeyboardProps) {
   const [openControl, setOpenControl] = useState<"music" | "effects" | null>(null)
 
   const keys = [
     ["Q", "W", "E", "R", "T", "Z", "U", "I", "O", "P"],
     ["dummy", "A", "S", "D", "F", "G", "H", "J", "K", "L", "dummy"],
-    ["dummy", "Y", "X", "C", "V", "B", "N", "M", "dummy"],
+    ["dummy", "Y", "X", "C", "V", "B", "N", "M", "godModeReady"],
   ]
 
   const handleSoundControlPress = useCallback((type: "music" | "effects") => {
     setOpenControl((prev) => (prev === type ? null : type))
   }, [])
+
+  const handleGodModeReady = () => {
+    if (godModeReady) {
+      console.log("God Mode activated!")
+      onKeyPress("GODMODE")
+    }
+  }
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -75,6 +84,17 @@ export default function Keyboard({
                   <Volume2 size={16} />
                 </button>
               )
+            } else if (key === "godModeReady") {
+              return (
+                <button
+                  key={`${rowIndex}-${key}-${index}`}
+                  className={`${styles.key} ${styles.godModeReady} ${godModeReady ? styles.active : styles.inactive}`}
+                  onClick={handleGodModeReady}
+                  disabled={!godModeReady || (disabled && !godModeReady)}
+                >
+                  <span>GOD MODE</span>
+                </button>
+              )
             } else {
               return (
                 <button
@@ -83,7 +103,9 @@ export default function Keyboard({
                     key === "dummy" ? `${styles.dummy} ${styles.otherDummy}` : ""
                   }`}
                   onClick={() => key !== "dummy" && onKeyPress(key)}
-                  disabled={key === "dummy" || usedKeys?.has(key) || disabled || totalAttempts <= 0}
+                  disabled={
+                    key === "dummy" || usedKeys?.has(key) || (disabled && key !== "GODMODE") || totalAttempts <= 0
+                  }
                 >
                   {key !== "dummy" ? key : ""}
                 </button>

@@ -34,26 +34,32 @@ export const SoundControl: React.FC<SoundControlProps> = ({ type, onClose }) => 
 
   useEffect(() => {
     if (isReady) {
-      if (type === "music") {
-        setMusicVolume(volume)
-      } else {
-        setEffectsVolume(volume)
-      }
+      const currentVolume = type === "music" ? getMusicVolume() : getEffectsVolume()
+      setVolume(currentVolume)
+      const currentMutedState = type === "music" ? getMusicMuted() : getEffectsMuted()
+      setIsMuted(currentMutedState)
     }
-  }, [volume, isReady, type])
+  }, [isReady, type])
 
   const handleVolumeChange = (newVolume: number) => {
-    setVolume(Math.max(0, Math.min(1, newVolume)))
+    const clampedVolume = Math.max(0, Math.min(1, newVolume))
+    setVolume(clampedVolume)
+    if (type === "music") {
+      setMusicVolume(clampedVolume)
+    } else {
+      setEffectsVolume(clampedVolume)
+    }
   }
 
   const handleMuteToggle = () => {
     if (isReady) {
+      const newMutedState = !isMuted
+      setIsMuted(newMutedState)
       if (type === "music") {
-        toggleMusicMute()
+        toggleMusicMute(newMutedState)
       } else {
-        toggleEffectsMute()
+        toggleEffectsMute(newMutedState)
       }
-      setIsMuted(!isMuted)
     }
   }
 
@@ -87,6 +93,7 @@ export const SoundControl: React.FC<SoundControlProps> = ({ type, onClose }) => 
   return (
     <div className={styles.soundControl}>
       <button
+        onClick={handleMuteToggle}
         onMouseDown={handleMuteMouseDown}
         onMouseUp={handleMuteMouseUp}
         onMouseLeave={handleMuteMouseUp}

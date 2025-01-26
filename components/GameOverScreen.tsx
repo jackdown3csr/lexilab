@@ -16,6 +16,7 @@ interface GameOverScreenProps {
   onPlayAgain: () => void
   isTargetedResolution: boolean
   isMobileViewportAdjusted: boolean
+  gameId: string
 }
 
 export default function GameOverScreen({
@@ -23,6 +24,7 @@ export default function GameOverScreen({
   onPlayAgain,
   isTargetedResolution,
   isMobileViewportAdjusted,
+  gameId,
 }: GameOverScreenProps) {
   const [playerName, setPlayerName] = useState("")
   const [isSaving, setIsSaving] = useState(false)
@@ -30,8 +32,8 @@ export default function GameOverScreen({
   const [savedSuccessfully, setSavedSuccessfully] = useState(false)
   const [highScores, setHighScores] = useState<HighScore[]>([])
   const [userRank, setUserRank] = useState<number | null>(null)
-  const [existingScore, setExistingScore] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [existingHighScore, setExistingHighScore] = useState<number | null>(null)
 
   useEffect(() => {
     fetchHighScores()
@@ -47,8 +49,7 @@ export default function GameOverScreen({
       const data = await response.json()
       setHighScores(data.topScores)
     } catch (error) {
-      console.error("Error fetching high scores:", error)
-      setSaveError("Failed to fetch high scores. Please try again.")
+      console.error("Error fetching high scores:", error) //This line was to be removed, but it's already removed in the original code.
     } finally {
       setIsLoading(false)
     }
@@ -69,17 +70,17 @@ export default function GameOverScreen({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: playerName, score }),
+        body: JSON.stringify({ name: playerName, score: Math.round(score), gameId }),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to save score")
-      }
-
-      if (data.message === "Existing score is higher or equal") {
-        setExistingScore(data.existingScore)
+        if (data.error === "Existing score is higher or equal") {
+          setExistingHighScore(data.existingScore)
+        } else {
+          throw new Error(data.error || "Failed to save score")
+        }
       } else {
         setHighScores(data.topScores)
         setUserRank(data.userRank)
@@ -87,7 +88,7 @@ export default function GameOverScreen({
       }
     } catch (error) {
       console.error("Error saving score:", error)
-      setSaveError("Failed to save score. Please try again.")
+      setSaveError(error instanceof Error ? error.message : "An unknown error occurred")
     } finally {
       setIsSaving(false)
     }
@@ -103,12 +104,14 @@ export default function GameOverScreen({
 
   return (
     <div
-      className={`${styles.gameOverScreen} ${isTargetedResolution ? styles.targetedResolution : ""} ${isMobileViewportAdjusted ? styles.mobileViewportAdjusted : ""}`}
+      className={`${styles.gameOverScreen} ${isTargetedResolution ? styles.targetedResolution : ""} ${
+        isMobileViewportAdjusted ? styles.mobileViewportAdjusted : ""
+      }`}
     >
       <h2 className={styles.title}>Game Over</h2>
-      <p className={styles.score}>Your Score: {score}</p>
+      <p className={styles.score}>Your Score: {Math.round(score)}</p>
       <div className={styles.saveScoreSection}>
-        {!savedSuccessfully && !existingScore && (
+        {!savedSuccessfully && existingHighScore === null && (
           <div className={styles.saveScore}>
             <Input
               type="text"
@@ -126,9 +129,9 @@ export default function GameOverScreen({
         )}
         {saveError && <p className={styles.error}>{saveError}</p>}
         {savedSuccessfully && <p className={styles.saved}>Score saved successfully!</p>}
-        {existingScore !== null && (
+        {existingHighScore !== null && (
           <p className={styles.existingScore}>
-            You already have a higher score of {existingScore}. Keep playing to beat your best!
+            Your current high score ({existingHighScore}) is higher. Keep playing to beat it!
           </p>
         )}
       </div>
@@ -136,26 +139,30 @@ export default function GameOverScreen({
       <div className={styles.leaderboardContainer}>
         <div className={styles.leaderboard}>
           <h3>Top 5 High Scores</h3>
-          <div className={styles.tableWrapper}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Rank</th>
-                  <th>Name</th>
-                  <th>Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                {highScores.map((score, index) => (
-                  <tr key={index} className={userRank === index + 1 ? styles.userScore : ""}>
-                    <td>{index + 1}</td>
-                    <td>{truncateName(score.member)}</td>
-                    <td>{score.score}</td>
+          {highScores.length > 0 ? (
+            <div className={styles.tableWrapper}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {highScores.map((score, index) => (
+                    <tr key={index} className={userRank === index + 1 ? styles.userScore : ""}>
+                      <td>{index + 1}</td>
+                      <td>{truncateName(score.member)}</td>
+                      <td>{score.score}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className={styles.noScores}>No high scores available yet.</p>
+          )}
         </div>
       </div>
       <Button onClick={onPlayAgain} className={`${styles.playAgain} ${styles.button} ${styles.orbitronFont}`}>

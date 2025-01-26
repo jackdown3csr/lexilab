@@ -1,28 +1,35 @@
 import { NextResponse } from "next/server"
 import { kv } from "@vercel/kv"
 
+interface GameSummary {
+  score: number
+  // Add other properties as needed
+}
+
 interface HighScore {
   member: string
   score: number
 }
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const limit = Number.parseInt(searchParams.get("limit") || "5", 10)
-
   try {
-    console.log("Fetching high scores from KV store...")
-    const highScores = await kv.zrange("highscores", 0, -1, { rev: true, withScores: true })
-    console.log("Received high scores:", JSON.stringify(highScores))
+    const { searchParams } = new URL(request.url)
+    const limit = Number.parseInt(searchParams.get("limit") || "5", 10)
+    const name = searchParams.get("name")
 
-    if (!highScores || highScores.length === 0) {
-      console.log("No high scores found in the KV store")
-      return NextResponse.json({ topScores: [], totalScores: 0 }, { status: 200 })
+    if (name) {
+      const score = await kv.zscore("leaderboard", name.toUpperCase())
+      if (score !== null) {
+        return NextResponse.json({ score })
+      } else {
+        return NextResponse.json({ score: null })
+      }
     }
 
-    if (!Array.isArray(highScores)) {
-      console.error("Invalid data format received from KV store:", highScores)
-      return NextResponse.json({ error: "Invalid data format received from KV store" }, { status: 500 })
+    const highScores = await kv.zrange("leaderboard", 0, limit - 1, { rev: true, withScores: true })
+
+    if (!highScores || !Array.isArray(highScores)) {
+      return NextResponse.json({ error: "Failed to retrieve high scores" }, { status: 500 })
     }
 
     const formattedScores: HighScore[] = []
@@ -30,24 +37,14 @@ export async function GET(request: Request) {
       const member = highScores[i]
       const score = highScores[i + 1]
       if (typeof member === "string" && typeof score === "number") {
-        formattedScores.push({ member: member.toUpperCase(), score })
-      } else {
-        console.warn(`Skipping invalid score data: ${member}, ${score}`)
+        formattedScores.push({ member, score })
       }
     }
 
-    const topScores = formattedScores.slice(0, limit)
-    const totalScores = formattedScores.length
-
-    console.log("Formatted scores:", { topScores, totalScores })
-    return NextResponse.json({ topScores, totalScores })
+    return NextResponse.json({ topScores: formattedScores })
   } catch (error) {
-    console.error("Error fetching high scores:", error)
     return NextResponse.json(
-      {
-        error: "Failed to fetch high scores",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to retrieve high scores", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 },
     )
   }
@@ -56,9 +53,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { name, score } = body
-
-    console.log("Received POST request with body:", JSON.stringify(body))
+    const { name, score, gameId } = body
 
     if (!name || typeof name !== "string" || name.trim() === "") {
       return NextResponse.json({ error: "Invalid name provided" }, { status: 400 })
@@ -70,30 +65,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid score provided" }, { status: 400 })
     }
 
-    // Check if the player already has a score
-    const existingScore = await kv.zscore("highscores", uppercaseName)
+    const gameSummary = (await kv.get(`summary:${gameId}`)) as GameSummary | null
 
-    if (existingScore !== null) {
-      if (score <= existingScore) {
-        return NextResponse.json(
-          {
-            message: "Existing score is higher or equal",
-            existingScore: existingScore,
-          },
-          { status: 200 },
-        )
-      }
+    if (!gameSummary || gameSummary.score !== score) {
+      return NextResponse.json({ error: "Invalid score or game not found" }, { status: 400 })
     }
 
-    console.log(`Adding/updating high score: ${uppercaseName} - ${score}`)
-    await kv.zadd("highscores", { score: score, member: uppercaseName })
+    const existingScore = await kv.zscore("leaderboard", uppercaseName)
+    if (existingScore !== null && existingScore >= score) {
+      return NextResponse.json({ error: "Existing score is higher or equal", existingScore }, { status: 400 })
+    }
 
-    console.log("Fetching updated high scores...")
-    const updatedHighScores = await kv.zrange("highscores", 0, -1, { rev: true, withScores: true })
-    console.log("Raw updated high scores:", JSON.stringify(updatedHighScores))
+    await kv.zadd("leaderboard", { score: score, member: uppercaseName })
+
+    const updatedHighScores = await kv.zrange("leaderboard", 0, -1, { rev: true, withScores: true })
 
     if (!updatedHighScores || !Array.isArray(updatedHighScores)) {
-      console.error("Invalid data received from KV store after adding new score:", updatedHighScores)
       return NextResponse.json({ error: "Failed to retrieve updated high scores" }, { status: 500 })
     }
 
@@ -103,8 +90,6 @@ export async function POST(request: Request) {
       const score = updatedHighScores[i + 1]
       if (typeof member === "string" && typeof score === "number") {
         formattedScores.push({ member, score })
-      } else {
-        console.warn(`Skipping invalid score data: ${member}, ${score}`)
       }
     }
 
@@ -112,15 +97,15 @@ export async function POST(request: Request) {
     const topScores = formattedScores.slice(0, 5)
     const totalScores = formattedScores.length
 
-    console.log("Formatted updated high scores:", { topScores, totalScores, userRank })
+    await kv.del(`summary:${gameId}`)
+
     return NextResponse.json({
-      message: "High score added/updated successfully",
+      message: "High score added to leaderboard successfully",
       topScores,
       totalScores,
       userRank,
     })
   } catch (error) {
-    console.error("Error saving high score:", error)
     return NextResponse.json(
       {
         error: "Failed to save high score",

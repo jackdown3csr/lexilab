@@ -6,7 +6,7 @@ export async function GET() {
     const words = await kv.get("words")
 
     if (!words || !Array.isArray(words) || words.length === 0) {
-      return NextResponse.json({ message: "Words not found. Please populate words." }, { status: 404 })
+      return NextResponse.json({ message: "Words not found. Please upload words." }, { status: 404 })
     }
 
     return NextResponse.json({ message: "Application initialized successfully" })

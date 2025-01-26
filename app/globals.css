@@ -12,16 +12,9 @@
   --disabled-color: #666666;
   --glow-color: rgba(244, 151, 86, 0.5);
   --border-color: #333333; /* Add this line */
-
-  /* Slider-specific variables */
-  --slider-background: var(--secondary-color);
-  --slider-foreground: var(--primary-color);
-  --slider-thumb: var(--primary-color);
-  --slider-thumb-border: var(--text-color);
 }
 
-/* Remove the following line if it exists */
-/* * { @apply border-border; } */
+
 
 * {
   box-sizing: border-box;

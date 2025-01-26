@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 100%; /* Update: Removed vh */
+  justify-content: flex-start;
+  min-height: 100vh;
   width: 100%;
   padding: 1rem;
   text-align: center;
@@ -11,6 +11,7 @@
   box-shadow: 0 0 20px var(--glow-color);
   animation: fadeIn 1s ease-out;
   overflow-y: auto;
+  position: relative;
 }
 
 .content {
@@ -18,9 +19,9 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  padding: 1rem 0; /* Update */
+  padding: 1rem 0;
 }
 
 .gameTitleContainer {
@@ -32,7 +33,7 @@
 .gameTitle {
   font-size: clamp(2rem, 8vw, 4rem);
   color: var(--primary-color);
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   text-shadow: 0 0 10px var(--glow-color);
   display: flex;
   justify-content: center;
@@ -89,6 +90,13 @@
   margin-bottom: 1rem;
   text-shadow: 0 0 5px var(--glow-color);
   text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.rulesTitle:hover {
+  transform: translateY(-2px);
+  color: var(--text-color);
 }
 
 .rulesList {
@@ -103,11 +111,6 @@
   margin-bottom: 0.75rem;
   color: var(--text-color);
   font-size: clamp(0.8rem, 2vw, 0.9rem);
-  transition: transform 0.3s ease;
-}
-
-.rulesList li:hover {
-  transform: translateX(5px);
 }
 
 .ruleIcon {
@@ -142,11 +145,38 @@
   font-size: clamp(0.6rem, 1.5vw, 0.7rem);
   color: var(--text-color);
   opacity: 0.7;
-  margin-top: 0.5rem;
-  position: absolute; /* Update */
-  bottom: 1rem; /* Update */
-  left: 50%; /* Update */
-  transform: translateX(-50%); /* Update */
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.tabs {
+  width: 100%;
+}
+
+.tabsList {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.tabsTrigger {
+  background-color: transparent;
+  color: var(--text-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tabsTrigger[data-state="active"] {
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.tabsContent {
+  padding: 1rem;
+  background-color: rgba(244, 151, 86, 0.1);
+  border-radius: 10px;
 }
 
 @keyframes fadeIn {
@@ -175,23 +205,6 @@
   }
   to {
     text-shadow: 0 0 20px var(--glow-color), 0 0 30px var(--glow-color);
-  }
-}
-
-@keyframes slideInFromTop {
-  from {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes expandUnderline {
-  to {
-    transform: scaleX(1);
   }
 }
 
@@ -279,5 +292,9 @@
 
 .targetedResolution .wordCount {
   font-size: clamp(0.5rem, 1.2vw, 0.6rem);
+}
+
+.mobileViewportAdjusted {
+  min-height: -webkit-fill-available;
 }
 

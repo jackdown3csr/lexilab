@@ -1,73 +1,84 @@
+import { kv } from "@vercel/kv"
+import { gameSettings } from "./gameSettings"
+
+interface GameState {
+  currentWord: string
+  currentHint: string
+  attempts: number
+  score: number
+  usedLetters: string[]
+  correctLetters: string[]
+  multiplier: number
+  wordsCompleted: number
+}
+
 export async function startGame() {
-  console.log("Starting new game")
   try {
-    const response = await fetch("/api/start-game", {
-      method: "POST",
-    })
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+    const words = (await kv.get("words")) as [string, string][]
+    if (!words || words.length === 0) {
+      throw new Error("No words available in the database")
     }
-    const data = await response.json()
-    if (!data || !data.gameId || !data.initialState) {
-      throw new Error("Invalid response from server")
+
+    const [word, hint] = words[Math.floor(Math.random() * words.length)]
+    const gameId = Math.random().toString(36).substring(2, 15)
+
+    const initialState = {
+      currentWord: word.toUpperCase(),
+      currentHint: hint,
+      attempts: gameSettings.initialAttempts,
+      score: 0,
+      usedLetters: [],
+      correctLetters: [],
+      multiplier: gameSettings.initialBaseMultiplier,
+      wordsCompleted: 0,
     }
-    console.log("Game started successfully", data)
+
+    await kv.set(`game:${gameId}`, initialState, { ex: 3600 }) // Expire in 1 hour
+
     return {
-      ...data,
-      initialState: {
-        ...data.initialState,
-        usedWords: [data.initialState.currentWord.toUpperCase()],
-      },
+      gameId,
+      initialState,
+      dbInteractions: 1, // Initial DB interaction for starting the game
     }
   } catch (error) {
-    console.error("Error in startGame:", error)
+    throw new Error(`Failed to start game: ${error instanceof Error ? error.message : "Unknown error"}`)
+  }
+}
+
+export async function getFinalScore(gameId: string) {
+  try {
+    const gameState = (await kv.get(`game:${gameId}`)) as GameState | null
+    if (!gameState) {
+      throw new Error("Game not found")
+    }
+    return gameState.score
+  } catch (error) {
     throw error
   }
 }
 
-export async function validateGuess(gameId: string, guesses: string, getNewWord: boolean) {
-  console.log("Validating guess", { gameId, guesses, getNewWord })
+export async function submitGameSummary(gameSummary: {
+  gameId: string
+  score: number
+  wordsCompleted: number
+  totalCorrectGuesses: number
+  timeTaken: number
+}) {
   try {
-    const response = await fetch("/api/validate-guess", {
+    const response = await fetch("/api/submit-game-summary", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ gameId, guesses, getNewWord }),
+      body: JSON.stringify(gameSummary),
     })
     if (!response.ok) {
-      throw new Error("Failed to validate guess")
+      const errorData = await response.json()
+      throw new Error(errorData.error || "Failed to submit game summary")
     }
     const data = await response.json()
-    console.log("Guess validation result:", data)
     return data
   } catch (error) {
-    console.error("Error in validateGuess:", error)
-    throw error
-  }
-}
-
-export async function getFinalScore(gameId: string, currentScore: number) {
-  console.log("Getting final score", { gameId, currentScore })
-  try {
-    const response = await fetch(`/api/get-final-score`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ gameId, currentScore }),
-    })
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    const data = await response.json()
-    if (data.finalScore === undefined) {
-      throw new Error("Final score not found in response")
-    }
-    console.log("Final score retrieved:", data)
-    return data
-  } catch (error) {
-    console.error("Error in getFinalScore:", error)
     throw error
   }
 }

@@ -22,7 +22,7 @@ export async function POST() {
       wordsCompleted: 0,
     }
 
-    await kv.set(`game:${gameId}`, initialState, { ex: 3600 }) // Expire in 1 hour
+    await kv.set(`game:${gameId}`, initialState, { ex: 86400 }) // Expire in 24 hours
 
     return NextResponse.json({
       gameId,
