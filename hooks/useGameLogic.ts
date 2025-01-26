@@ -86,7 +86,13 @@ export function useGameLogic(initialState: {
         setConsecutiveCorrectGuessesForExtraLife((prev) => {
           const newCount = prev + 1
           if (newCount >= gameSettings.bonusLifeCorrectGuesses) {
-            setTotalAttempts((prevAttempts) => prevAttempts + 1)
+            console.log(`Before setTotalAttempts: ${totalAttempts}`)
+            setTotalAttempts((prevAttempts) => {
+              const newAttempts = prevAttempts + 1
+              console.log(`Setting totalAttempts: ${prevAttempts} -> ${newAttempts}`)
+              return newAttempts
+            })
+            console.log(`After setTotalAttempts: ${totalAttempts}`)
             setBonusLifeEarned(true)
             playBonusLifeSound()
             setTimeout(() => setBonusLifeEarned(false), 3000)
@@ -112,8 +118,10 @@ export function useGameLogic(initialState: {
         setConsecutiveCorrectGuesses(0)
         setConsecutiveCorrectGuessesForExtraLife(0)
         if (!isGodMode) {
+          console.log(`Before setTotalAttempts: ${totalAttempts}`)
           newAttempts = Math.max(0, newAttempts - 1)
           setTotalAttempts(newAttempts)
+          console.log(`After setTotalAttempts: ${totalAttempts}`)
         }
       }
 
@@ -158,6 +166,7 @@ export function useGameLogic(initialState: {
         setGodModeReady(false)
         setTotalCorrectGuesses(0)
       } else if (isGodMode) {
+        console.log(`Before setTotalAttempts: ${totalAttempts}`)
         setGodModePressesLeft((prev) => {
           const newPresses = prev - 1
           if (newPresses <= 0) {
@@ -168,11 +177,14 @@ export function useGameLogic(initialState: {
           }
           return Math.max(0, newPresses)
         })
+        console.log(`After setTotalAttempts: ${totalAttempts}`)
       }
 
       setUsedKeys(newUsedKeys)
       setCorrectKeys(newCorrectKeys)
+      console.log(`Before setTotalAttempts: ${totalAttempts}`)
       setTotalAttempts(newAttempts)
+      console.log(`After setTotalAttempts: ${totalAttempts}`)
 
       const newBaseMultiplier = isCorrect
         ? Math.min(gameSettings.maxBaseMultiplier, baseMultiplier + gameSettings.baseMultiplierIncrement)
@@ -207,16 +219,10 @@ export function useGameLogic(initialState: {
   const increaseLevel = useCallback(() => {
     setLevel((prevLevel) => {
       const newLevel = prevLevel + 1
-      if (newLevel % gameSettings.freeLifeInterval === 0) {
-        setTotalAttempts((prevAttempts) => prevAttempts + 1)
-        setBonusLifeEarned(true)
-        setTimeout(() => {
-          setBonusLifeEarned(false)
-        }, 3000)
-      }
+      console.log(`Increasing level from ${prevLevel} to ${newLevel}`)
       return newLevel
     })
-  }, [setLevel])
+  }, [])
 
   const updateTimeMultiplier = useCallback(() => {
     setTimeMultiplier(calculateTimeMultiplier(timeRemaining, levelDuration))
@@ -243,7 +249,9 @@ export function useGameLogic(initialState: {
 
   const checkForFreeLife = useCallback(() => {
     if (level % gameSettings.freeLifeInterval === 0) {
+      console.log(`Before setTotalAttempts: ${totalAttempts}`)
       setTotalAttempts((prevAttempts) => prevAttempts + 1)
+      console.log(`After setTotalAttempts: ${totalAttempts}`)
       setBonusLifeEarned(true)
       playBonusLifeSound()
       setTimeout(() => {

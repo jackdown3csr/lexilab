@@ -60,6 +60,7 @@ export default function Game() {
   const [currentWordLength] = useState(0)
   const [bonusLifeEarned, setBonusLifeEarned] = useState(false)
   const [lifeBonusEarned, setLifeBonusEarned] = useState(false)
+  const [freeLifeAwardedThisLevel, setFreeLifeAwardedThisLevel] = useState(false)
 
   const playGetReadySequence = useCallback(() => {
     const playBeep = (index: number) => {
@@ -116,7 +117,7 @@ export default function Game() {
     resetCorrectGuessesCount,
 
     setCurrentWordLength,
-    checkForFreeLife,
+    //checkForFreeLife,
     totalCorrectGuesses,
     setTotalCorrectGuesses,
     increaseLevel,
@@ -248,6 +249,11 @@ export default function Game() {
 
         await new Promise((resolve) => setTimeout(resolve, 6000))
 
+        setFreeLifeAwardedThisLevel(false)
+        console.log("Initializing game:")
+        console.log(`Initial level: ${level}`)
+        console.log(`Initial total attempts: ${totalAttempts}`)
+        console.log(`Initial freeLifeAwardedThisLevel: ${freeLifeAwardedThisLevel}`)
         setGameState("playing")
         setIsGetReadyPhase(false)
         setShowGetReadyAnimation(false)
@@ -274,16 +280,35 @@ export default function Game() {
     setLevelDuration,
     setTimeMultiplier,
     setTimeRemaining,
+    level,
+    totalAttempts,
+    freeLifeAwardedThisLevel,
   ])
 
   const startNewWord = useCallback(
     async (currentGameId: string) => {
+      console.log(`Starting new word. Current level: ${level}, New level: ${level + 1}`)
+      console.log(`Current total attempts: ${totalAttempts}`)
+      console.log(`Free life awarded this level: ${freeLifeAwardedThisLevel}`)
       try {
         if (!currentGameId) {
           throw new Error("Game ID is not set")
         }
+        const newLevel = level + 1
+        if (newLevel % gameSettings.freeLifeInterval === 0 && !freeLifeAwardedThisLevel) {
+          console.log(`Eligible for free life. Level ${newLevel} is divisible by ${gameSettings.freeLifeInterval}`)
+          setTotalAttempts((prevAttempts) => {
+            const newAttempts = prevAttempts + 1
+            console.log(`Awarding free life. Previous attempts: ${prevAttempts}, New attempts: ${newAttempts}`)
+            return newAttempts
+          })
+          setBonusLifeEarned(true)
+          setFreeLifeAwardedThisLevel(true)
+          console.log("Bonus life earned and freeLifeAwardedThisLevel set to true")
+        } else {
+          console.log(`Not eligible for free life. Level ${newLevel} or free life already awarded this level.`)
+        }
         increaseLevel()
-        checkForFreeLife()
         resetForNewLevel()
         const response = await fetch("/api/get-new-word", {
           method: "POST",
@@ -327,6 +352,8 @@ export default function Game() {
 
         setShowGetReadyAnimation(false)
         setIsGetReadyPhase(false)
+        setFreeLifeAwardedThisLevel(false)
+        console.log("freeLifeAwardedThisLevel reset to false for the next level")
       } catch (error) {
         setError({
           message: "Failed to fetch new word",
@@ -343,15 +370,20 @@ export default function Game() {
       setTimeRemaining,
       resetKeyboard,
       setBaseMultiplier,
-      checkForFreeLife,
+      resetForNewLevel,
+      playGetReadySequence,
+      playGoSequence,
+      setTotalAttempts,
+      setBonusLifeEarned,
+      setFreeLifeAwardedThisLevel,
+      level,
       increaseLevel,
       setError,
       setIsGetReadyPhase,
       setShowGetReadyAnimation,
       setUsedWords,
-      resetForNewLevel,
-      playGetReadySequence,
-      playGoSequence,
+      freeLifeAwardedThisLevel,
+      totalAttempts,
     ],
   )
 
@@ -420,9 +452,9 @@ export default function Game() {
       if (result.newAttempts === 0) {
         handleGameOver()
       }
-      if (checkForFreeLife()) {
-        setLifeBonusEarned(true)
-      }
+      // if (checkForFreeLife()) {
+      //   setLifeBonusEarned(true);
+      // }
     },
     [
       gameState,
@@ -440,8 +472,6 @@ export default function Game() {
       correctKeys,
       godModeReady,
       setGodModeReady,
-      checkForFreeLife,
-      setLifeBonusEarned,
       setTotalAttempts,
       setCorrectKeys,
       setTotalCorrectGuesses,
@@ -510,7 +540,9 @@ export default function Game() {
 
   useEffect(() => {
     if (lifeBonusEarned) {
+      console.log(`lifeBonusEarned effect triggered. Current totalAttempts: ${totalAttempts}`)
       setTotalAttempts((prevAttempts: number) => {
+        console.log(`Setting totalAttempts in lifeBonusEarned effect: ${prevAttempts} -> ${prevAttempts + 1}`)
         return prevAttempts + 1
       })
       setBonusLifeEarned(true)
@@ -522,6 +554,7 @@ export default function Game() {
   }, [lifeBonusEarned, setTotalAttempts, setBonusLifeEarned])
 
   useEffect(() => {
+    console.log(`totalAttempts changed in Game component: ${totalAttempts}`)
     if (totalAttempts === 0 || timeRemaining === 0) {
       setIsGodMode(false)
       setGodModeReady(false)
