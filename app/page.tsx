@@ -560,7 +560,7 @@ export default function Game() {
       setGodModeReady(false)
       handleGameOver()
     }
-  }, [totalAttempts, timeRemaining, handleGameOver, setIsGodMode, setGodModeReady])
+  }, [totalAttempts, timeRemaining, handleGameOver, setIsGodMode, setGodModeReady, totalAttempts])
 
   useEffect(() => {
     if (bonusLifeEarnedFromHook) {
