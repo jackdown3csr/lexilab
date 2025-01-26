@@ -18,7 +18,7 @@ export const gameSettings = {
   levelDurationDecrement: 5,
   minLevelDuration: 60,
   wordCompletionDelay: 1500,
-  godModeThreshold: 25, // Number of correct guesses to enter God Mode
+  godModeThreshold: 15, // Number of correct guesses to enter God Mode
   freeLifeInterval: 5, // Interval of levels at which a free life is awarded
   bonusLifeCorrectGuesses: 10, // Number of consecutive correct guesses to earn a bonus life
 }

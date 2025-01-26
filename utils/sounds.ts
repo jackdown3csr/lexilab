@@ -39,7 +39,6 @@ class SoundManager {
       this.isPlaying = true
       this.bgMusic.volume = this.musicVolume
       this.bgMusic.play().catch((error) => {
-        console.error("Error playing background music:", error)
         this.isPlaying = false
       })
     }
@@ -254,9 +253,9 @@ export function playBackgroundMusic() {
       .getBgMusic()!
       .play()
       .catch((error) => {
-        console.error("Error playing background music:", error)
         soundManager.setIsPlaying(false)
       })
+  } else {
   }
 }
 

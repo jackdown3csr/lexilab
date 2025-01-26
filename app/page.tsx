@@ -62,26 +62,17 @@ export default function Game() {
   const [lifeBonusEarned, setLifeBonusEarned] = useState(false)
 
   const playGetReadySequence = useCallback(() => {
-    return new Promise<void>((resolve) => {
-      const playBeep = (index: number) => {
-        if (index < 5) {
-          playGetReadyBeep()
-          setTimeout(() => playBeep(index + 1), 1000)
-        } else {
-          resolve()
-        }
+    const playBeep = (index: number) => {
+      if (index < 5) {
+        playGetReadyBeep()
+        setTimeout(() => playBeep(index + 1), 1000)
       }
-      playBeep(0)
-    })
+    }
+    playBeep(0)
   }, [])
 
   const playGoSequence = useCallback(() => {
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        playGoSound()
-        resolve()
-      }, 5000)
-    })
+    setTimeout(playGoSound, 5000)
   }, [])
 
   const {
@@ -245,6 +236,16 @@ export default function Game() {
         setIsGetReadyPhase(true)
         setShowGetReadyAnimation(true)
 
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => {
+            playGetReadyBeep()
+          }, i * 1000)
+        }
+
+        setTimeout(() => {
+          playGoSound()
+        }, 5000)
+
         await new Promise((resolve) => setTimeout(resolve, 6000))
 
         setGameState("playing")
@@ -314,10 +315,12 @@ export default function Game() {
         setIsGetReadyPhase(true)
         setShowGetReadyAnimation(true)
 
-        // Ensure these function calls are properly handled
-        Promise.all([playGetReadySequence(), playGoSequence()]).catch((error) => {
-          console.error("Error playing sound sequences:", error)
-          // Handle the error appropriately, e.g., show a message to the user
+        const playSequences = async () => {
+          await playGetReadySequence()
+          await playGoSequence()
+        }
+        playSequences().catch((error) => {
+          console.error("Error in playSequences:", error)
         })
 
         await new Promise((resolve) => setTimeout(resolve, 6000))
@@ -400,11 +403,17 @@ export default function Game() {
         }, gameSettings.wordCompletionDelay)
       } else {
         if (isGodMode) {
-          result.newCorrectKeys.size > correctKeys.size
-            ? playGodModeCorrectLetterSound()
-            : playGodModeIncorrectLetterSound()
+          if (result.newCorrectKeys.size > correctKeys.size) {
+            playGodModeCorrectLetterSound()
+          } else {
+            playGodModeIncorrectLetterSound()
+          }
         } else {
-          result.newCorrectKeys.size > correctKeys.size ? playCorrectLetterSound() : playIncorrectLetterSound()
+          if (result.newCorrectKeys.size > correctKeys.size) {
+            playCorrectLetterSound()
+          } else {
+            playIncorrectLetterSound()
+          }
         }
       }
 
@@ -530,24 +539,6 @@ export default function Game() {
       return () => clearTimeout(timer)
     }
   }, [bonusLifeEarnedFromHook, setBonusLifeEarned, setBonusLifeEarnedFromHook])
-
-  useEffect(() => {
-    if (isGetReadyPhase) {
-      Promise.all([
-        playGetReadySequence(),
-        new Promise<void>((resolve) => {
-          const goTimer = setTimeout(() => {
-            playGoSound()
-            resolve()
-          }, 5000)
-          return () => clearTimeout(goTimer)
-        }),
-      ]).catch((error) => {
-        console.error("Error in get ready phase:", error)
-        // Handle the error appropriately, e.g., show a message to the user
-      })
-    }
-  }, [isGetReadyPhase, playGetReadySequence])
 
   if (error) {
     return (
