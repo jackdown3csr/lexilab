@@ -8,8 +8,6 @@ interface DevOverlayProps {
   wordComplexityMultiplier: number
   score: number
   isGodMode: boolean
-  currentWord: string
-  currentHint: string
   totalAttempts: number
   level: number
   timeRemaining: number
@@ -30,8 +28,6 @@ const DevOverlay: React.FC<DevOverlayProps> = ({
   wordComplexityMultiplier,
   score,
   isGodMode,
-  currentWord,
-  currentHint,
   totalAttempts,
   level,
   timeRemaining,
@@ -88,8 +84,6 @@ const DevOverlay: React.FC<DevOverlayProps> = ({
       }}
     >
       <h3>Game State</h3>
-      <div>Current Word: {currentWord}</div>
-      <div>Hint: {currentHint}</div>
       <div>Current Level: {level}</div>
       <div>Total Lives: {totalAttempts}</div>
       <div>Initial Lives: {gameSettings?.initialAttempts ?? 10}</div>

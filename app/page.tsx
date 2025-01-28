@@ -601,8 +601,6 @@ export default function Game() {
           wordComplexityMultiplier={wordComplexityMultiplier}
           score={getSafeScore()}
           isGodMode={isGodMode}
-          currentWord={currentWord}
-          currentHint={currentHint}
           totalAttempts={totalAttempts}
           level={level}
           timeRemaining={timeRemaining}
